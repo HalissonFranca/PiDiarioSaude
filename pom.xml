@@ -85,12 +85,23 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
+<<<<<<< HEAD
+=======
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-database-postgresql</artifactId>
+		</dependency>
+		<dependency>
+>>>>>>> 642918d614cd2e5e6344c70451602c5148974576
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-jackson</artifactId>
 			<version>0.12.3</version>
 			<scope>runtime</scope>
 		</dependency>
 		
+<<<<<<< HEAD
+=======
+		
+>>>>>>> 642918d614cd2e5e6344c70451602c5148974576
 	</dependencies>
 
 	<build>

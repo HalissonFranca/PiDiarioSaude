@@ -24,6 +24,10 @@ public class PerguntaController {
     }
 
     // Retorna todas as perguntas
+<<<<<<< HEAD
+=======
+
+>>>>>>> 642918d614cd2e5e6344c70451602c5148974576
     @GetMapping("/perguntas")
     public List<PerguntaDTO> listarPerguntas() {
         List<PerguntaEntity> perguntas = perguntaRepository.findAll();
@@ -31,15 +35,24 @@ public class PerguntaController {
         return perguntas.stream().map(p -> {
             Map<String, Integer> opcoesMap = null;
             try {
+<<<<<<< HEAD
                 opcoesMap = objectMapper.readValue(p.getOpcoesJson(), new TypeReference<Map<String, Integer>>() {});
+=======
+                opcoesMap = objectMapper.readValue(p.getOpcoesJson(), new TypeReference<Map<String, Integer>>() {
+                });
+>>>>>>> 642918d614cd2e5e6344c70451602c5148974576
             } catch (Exception e) {
                 e.printStackTrace();
             }
             return new PerguntaDTO(
                     p.getId(),
                     p.getTexto(),
+<<<<<<< HEAD
                     opcoesMap
             );
+=======
+                    opcoesMap);
+>>>>>>> 642918d614cd2e5e6344c70451602c5148974576
         }).collect(Collectors.toList());
     }
 
