@@ -15,12 +15,21 @@ import jakarta.persistence.Table;
 import java.util.List;
 import jakarta.persistence.OneToMany;
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> 642918d614cd2e5e6344c70451602c5148974576
 @Entity
 @Table(name = "usuario_info_clinica")
 public class UsuarioEntity {
 
+<<<<<<< HEAD
+    @Id//chave primária
+    @GeneratedValue(strategy = GenerationType.IDENTITY)//auto incremental
+=======
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+>>>>>>> 642918d614cd2e5e6344c70451602c5148974576
     @Column(name = "id_usuario")
     private long idUsuario;
 
@@ -36,6 +45,15 @@ public class UsuarioEntity {
     @Column(nullable = false)
     private float altura;
 
+<<<<<<< HEAD
+    @Column(name = "user_id")
+    private Long userId;
+
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
+
+=======
+>>>>>>> 642918d614cd2e5e6344c70451602c5148974576
     @OneToMany(mappedBy = "usuario")
     @JsonIgnore
     private List<PrescricaoMedicaEntity> prescricoesMedicas;
@@ -44,6 +62,17 @@ public class UsuarioEntity {
     @JsonIgnore
     private List<UsuarioDoencasEntity> usuarioDoencas;
 
+<<<<<<< HEAD
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<RespostaQuestionarioEntity> respostasQuestionario;
+
+    public UsuarioEntity(UsuarioDTO usuario){
+        BeanUtils.copyProperties(usuario, this);
+    }
+    public UsuarioEntity(){
+        
+=======
     // ✅ Removido @OneToMany de respostasQuestionario —
     // o questionário agora usa User (tabela 'users') como dono do relacionamento
 
@@ -52,6 +81,7 @@ public class UsuarioEntity {
     }
 
     public UsuarioEntity() {
+>>>>>>> 642918d614cd2e5e6344c70451602c5148974576
     }
 
     @Override
@@ -71,7 +101,21 @@ public class UsuarioEntity {
         if (getClass() != obj.getClass())
             return false;
         UsuarioEntity other = (UsuarioEntity) obj;
+<<<<<<< HEAD
+        if (idUsuario != other.idUsuario)
+            return false;
+        return true;
+    }
+
+    public List<RespostaQuestionarioEntity> getRespostasQuestionario() {
+        return respostasQuestionario;
+    }
+
+    public void setRespostasQuestionario(List<RespostaQuestionarioEntity> respostasQuestionario) {
+        this.respostasQuestionario = respostasQuestionario;
+=======
         return idUsuario == other.idUsuario;
+>>>>>>> 642918d614cd2e5e6344c70451602c5148974576
     }
 
     public long getId_usuario() {
@@ -113,6 +157,23 @@ public class UsuarioEntity {
     public void setAltura(float altura) {
         this.altura = altura;
     }
+<<<<<<< HEAD
+    
+    public List<PrescricaoMedicaEntity> getPrescricoesMedicas() {
+        return prescricoesMedicas;
+    }
+    public void setPrescricoesMedicas(List<PrescricaoMedicaEntity> prescricoesMedicas) {
+        this.prescricoesMedicas = prescricoesMedicas;
+    }
+    public List<UsuarioDoencasEntity> getUsuarioDoencas() {
+        return usuarioDoencas;
+    }
+    public void setUsuarioDoencas(List<UsuarioDoencasEntity> usuarioDoencas) {
+        this.usuarioDoencas = usuarioDoencas;
+    }
+    
+}
+=======
 
     public List<PrescricaoMedicaEntity> getPrescricoesMedicas() {
         return prescricoesMedicas;
@@ -130,3 +191,4 @@ public class UsuarioEntity {
         this.usuarioDoencas = usuarioDoencas;
     }
 }
+>>>>>>> 642918d614cd2e5e6344c70451602c5148974576

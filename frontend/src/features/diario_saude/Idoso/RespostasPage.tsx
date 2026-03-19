@@ -1,3 +1,18 @@
+<<<<<<< HEAD
+import { useQuery } from "@tanstack/react-query";
+import { Box, Typography, Stack } from "@mui/material";
+import PageContainer from "../components/PageContainer";
+import PageTitle from "../components/PageTitle";
+import SectionTitle from "../components/SectionTitle";
+
+import { questionarioApi } from "../api/questionarioApi";
+import type { RespostaDTO } from "../api/types";
+import BackButton from "../components/BackButton";
+
+export default function RespostasPage() {
+  const usuario = JSON.parse(localStorage.getItem("usuario") || "null");
+  if (!usuario) return null;
+=======
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Box, Typography, Stack, Paper, Divider, Chip } from "@mui/material";
@@ -57,6 +72,7 @@ export default function RespostasPage() {
   }, []);
 
   const pacienteId = paciente?.id_usuario;
+>>>>>>> 642918d614cd2e5e6344c70451602c5148974576
 
   const {
     data: respostas = [],
@@ -64,6 +80,17 @@ export default function RespostasPage() {
     isError,
     refetch,
   } = useQuery({
+<<<<<<< HEAD
+    queryKey: ["questionario", "respostas", usuario.id_usuario],
+    queryFn: () => questionarioApi.obterRespostas(usuario.id_usuario),
+    refetchOnWindowFocus: false,
+  });
+
+  if (isLoading) {
+    return (
+      <PageContainer>
+        <BackButton to="/saude" />
+=======
     queryKey: ["questionario", "respostas", pacienteId],
     queryFn: () => questionarioApi.obterRespostas(pacienteId),
     refetchOnWindowFocus: false,
@@ -79,6 +106,7 @@ export default function RespostasPage() {
     return (
       <PageContainer>
         <BackButton to={backTo} />
+>>>>>>> 642918d614cd2e5e6344c70451602c5148974576
         <Typography>Carregando respostas...</Typography>
       </PageContainer>
     );
@@ -87,6 +115,18 @@ export default function RespostasPage() {
   if (isError) {
     return (
       <PageContainer>
+<<<<<<< HEAD
+        <BackButton to="/saude" />
+        <Typography color="error">Erro ao carregar respostas.</Typography>
+        <Box mt={2}>
+          <Typography
+            sx={{ cursor: "pointer", textDecoration: "underline" }}
+            onClick={() => refetch()}
+          >
+            Tentar novamente
+          </Typography>
+        </Box>
+=======
         <BackButton to={backTo} />
         <Typography color="error">Erro ao carregar respostas.</Typography>
         <Typography
@@ -95,6 +135,7 @@ export default function RespostasPage() {
         >
           Tentar novamente
         </Typography>
+>>>>>>> 642918d614cd2e5e6344c70451602c5148974576
       </PageContainer>
     );
   }
@@ -102,6 +143,10 @@ export default function RespostasPage() {
   if (respostas.length === 0) {
     return (
       <PageContainer>
+<<<<<<< HEAD
+        <BackButton to="/saude" />
+        <Typography>Nenhuma resposta registrada.</Typography>
+=======
         <BackButton to={backTo} />
         <PageTitle>Questionário de Saúde</PageTitle>
         <Typography color="text.secondary">
@@ -109,10 +154,65 @@ export default function RespostasPage() {
             ? <>O paciente <strong>{paciente.nome}</strong> ainda não respondeu o questionário.</>
             : "Nenhuma resposta registrada ainda."}
         </Typography>
+>>>>>>> 642918d614cd2e5e6344c70451602c5148974576
       </PageContainer>
     );
   }
 
+<<<<<<< HEAD
+  // Ordena as respostas pelo id da pergunta
+  const respostasOrdenadas = respostas.slice().sort(
+    (a, b) => a.perguntaId - b.perguntaId
+  );
+
+  // Calcula pontuação total
+  const pontuacaoTotal = respostasOrdenadas.reduce((acc, r) => acc + r.peso, 0);
+
+  // Interpretação baseada na pontuação
+  let interpretacao = "";
+  if (pontuacaoTotal <= 6) interpretacao = "baixa vulnerabilidade clínico funcional";
+  else if (pontuacaoTotal <= 10) interpretacao = "moderada vulnerabilidade clínico funcional";
+  else interpretacao = "alta vulnerabilidade clínico funcional";
+
+  return (
+    <PageContainer>
+      <BackButton to="/saude" />
+      <PageTitle>Respostas do Questionário</PageTitle>
+
+      <Box mb={3} p={2} border="1px solid #ccc" borderRadius={2}>
+        <Typography variant="h6">
+          Pontuação total: {pontuacaoTotal} pontos
+        </Typography>
+        <Typography color="text.secondary">{interpretacao}</Typography>
+      </Box>
+
+      <Stack spacing={3}>
+        {respostasOrdenadas.map(
+          (r: RespostaDTO & { pergunta: any }, idx) => (
+            <Box
+              key={r.perguntaId}
+              p={2}
+              border="1px solid #ccc"
+              borderRadius={2}
+            >
+              <SectionTitle>Pergunta {idx + 1}</SectionTitle>
+              <Typography mb={1}>
+                <strong>Texto:</strong> {r.pergunta.texto}
+              </Typography>
+              <Typography mb={1}>
+                <strong>Resposta:</strong> {r.resposta}
+              </Typography>
+              <Typography color="text.secondary">
+                <strong>Peso:</strong> {r.peso}
+              </Typography>
+            </Box>
+          )
+        )}
+      </Stack>
+    </PageContainer>
+  );
+}
+=======
   const respostasOrdenadas = respostas.slice().sort((a, b) => a.perguntaId - b.perguntaId);
   const pontuacaoTotal = respostasOrdenadas.reduce((acc, r) => acc + r.peso, 0);
 
@@ -193,3 +293,4 @@ export default function RespostasPage() {
     </PageContainer>
   );
 }
+>>>>>>> 642918d614cd2e5e6344c70451602c5148974576
