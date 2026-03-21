@@ -1,27 +1,17 @@
 import http from "@/lib/http";
-<<<<<<< HEAD
-import type { Pergunta, RespostaDTO } from "../api/types";
-=======
 import type { Pergunta, Opcao, RespostaDTO } from "../api/types";
->>>>>>> 642918d614cd2e5e6344c70451602c5148974576
 
 const base = "/api/diario_saude/questionario";
 
 export const questionarioApi = {
   listarPerguntas: async (): Promise<Pergunta[]> => {
-<<<<<<< HEAD
-=======
     console.log("Antes do useQuery");
->>>>>>> 642918d614cd2e5e6344c70451602c5148974576
     const token = localStorage.getItem("token");
     const { data } = await http.get(`${base}/perguntas`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 642918d614cd2e5e6344c70451602c5148974576
     if (!Array.isArray(data)) return [];
 
     return data.map((p: any) => ({
@@ -37,12 +27,6 @@ export const questionarioApi = {
     const token = localStorage.getItem("token");
     const { data } = await http.post(`${base}/responder/${usuarioId}`, respostas, {
       headers: { Authorization: `Bearer ${token}` },
-<<<<<<< HEAD
-    });
-    return data;
-  },
-};
-=======
 
     });
     return data;
@@ -75,5 +59,29 @@ export const questionarioApi = {
       }))
       : [];
   },
+
+  criarPergunta: async (texto: string, opcoesJson: string) => {
+    const token = localStorage.getItem("token");
+    const { data } = await http.post(`${base}/perguntas`,
+      { texto, opcoesJson },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return data;
+  },
+
+  editarPergunta: async (id: number, texto: string, opcoesJson: string) => {
+    const token = localStorage.getItem("token");
+    const { data } = await http.put(`${base}/perguntas/${id}`,
+      { texto, opcoesJson },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return data;
+  },
+
+  deletarPergunta: async (id: number) => {
+    const token = localStorage.getItem("token");
+    await http.delete(`${base}/perguntas/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
 };
->>>>>>> 642918d614cd2e5e6344c70451602c5148974576

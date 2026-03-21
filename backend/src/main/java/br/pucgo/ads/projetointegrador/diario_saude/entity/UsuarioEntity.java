@@ -16,13 +16,20 @@ import java.util.List;
 import jakarta.persistence.OneToMany;
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 
 =======
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
 @Entity
 @Table(name = "usuario_info_clinica")
 public class UsuarioEntity {
 
+<<<<<<< HEAD
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+=======
 <<<<<<< HEAD
     @Id//chave primária
     @GeneratedValue(strategy = GenerationType.IDENTITY)//auto incremental
@@ -30,6 +37,7 @@ public class UsuarioEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     @Column(name = "id_usuario")
     private long idUsuario;
 
@@ -46,6 +54,8 @@ public class UsuarioEntity {
     private float altura;
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
     @Column(name = "user_id")
     private Long userId;
 
@@ -54,6 +64,7 @@ public class UsuarioEntity {
 
 =======
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     @OneToMany(mappedBy = "usuario")
     @JsonIgnore
     private List<PrescricaoMedicaEntity> prescricoesMedicas;
@@ -62,6 +73,8 @@ public class UsuarioEntity {
     @JsonIgnore
     private List<UsuarioDoencasEntity> usuarioDoencas;
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     @JsonIgnore
@@ -73,6 +86,7 @@ public class UsuarioEntity {
     public UsuarioEntity(){
         
 =======
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     // ✅ Removido @OneToMany de respostasQuestionario —
     // o questionário agora usa User (tabela 'users') como dono do relacionamento
 
@@ -81,7 +95,10 @@ public class UsuarioEntity {
     }
 
     public UsuarioEntity() {
+<<<<<<< HEAD
+=======
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     }
 
     @Override
@@ -102,6 +119,9 @@ public class UsuarioEntity {
             return false;
         UsuarioEntity other = (UsuarioEntity) obj;
 <<<<<<< HEAD
+        return idUsuario == other.idUsuario;
+=======
+<<<<<<< HEAD
         if (idUsuario != other.idUsuario)
             return false;
         return true;
@@ -116,6 +136,7 @@ public class UsuarioEntity {
 =======
         return idUsuario == other.idUsuario;
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     }
 
     public long getId_usuario() {
@@ -158,6 +179,8 @@ public class UsuarioEntity {
         this.altura = altura;
     }
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
     
     public List<PrescricaoMedicaEntity> getPrescricoesMedicas() {
         return prescricoesMedicas;
@@ -174,6 +197,7 @@ public class UsuarioEntity {
     
 }
 =======
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
 
     public List<PrescricaoMedicaEntity> getPrescricoesMedicas() {
         return prescricoesMedicas;
@@ -190,5 +214,9 @@ public class UsuarioEntity {
     public void setUsuarioDoencas(List<UsuarioDoencasEntity> usuarioDoencas) {
         this.usuarioDoencas = usuarioDoencas;
     }
+<<<<<<< HEAD
+}
+=======
 }
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829

@@ -1,5 +1,5 @@
 import { Container, Paper, Typography } from "@mui/material";
-import { ModuleGridSaude } from "../components/ModuleGridPaciente";
+import { ModuleGridSaude } from "../components/ModuleGridSaude";
 
 export default function SaudeMenuPage() {
   return (

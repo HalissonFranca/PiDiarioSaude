@@ -10,11 +10,16 @@ public class PerguntaDTO {
     private List<OpcaoDTO> opcoes; // Lista de opções com peso
 
 <<<<<<< HEAD
+    public PerguntaDTO() {
+    }
+=======
+<<<<<<< HEAD
     public PerguntaDTO() {}
 =======
     public PerguntaDTO() {
     }
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
 
     // Construtor que recebe Map e converte para List<OpcaoDTO>
     public PerguntaDTO(Long id, String texto, Map<String, Integer> opcoesMap) {
@@ -30,9 +35,13 @@ public class PerguntaDTO {
         return id;
     }
 <<<<<<< HEAD
+
+=======
+<<<<<<< HEAD
 =======
 
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     public void setId(Long id) {
         this.id = id;
     }
@@ -41,9 +50,13 @@ public class PerguntaDTO {
         return texto;
     }
 <<<<<<< HEAD
+
+=======
+<<<<<<< HEAD
 =======
 
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     public void setTexto(String texto) {
         this.texto = texto;
     }
@@ -52,9 +65,13 @@ public class PerguntaDTO {
         return opcoes;
     }
 <<<<<<< HEAD
+
+=======
+<<<<<<< HEAD
 =======
 
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     public void setOpcoes(List<OpcaoDTO> opcoes) {
         this.opcoes = opcoes;
     }
@@ -66,11 +83,16 @@ class OpcaoDTO {
     private int peso;
 
 <<<<<<< HEAD
+    public OpcaoDTO() {
+    }
+=======
+<<<<<<< HEAD
     public OpcaoDTO() {}
 =======
     public OpcaoDTO() {
     }
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
 
     public OpcaoDTO(String texto, int peso) {
         this.texto = texto;
@@ -82,9 +104,13 @@ class OpcaoDTO {
         return texto;
     }
 <<<<<<< HEAD
+
+=======
+<<<<<<< HEAD
 =======
 
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     public void setTexto(String texto) {
         this.texto = texto;
     }
@@ -93,9 +119,13 @@ class OpcaoDTO {
         return peso;
     }
 <<<<<<< HEAD
+
+=======
+<<<<<<< HEAD
 =======
 
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     public void setPeso(int peso) {
         this.peso = peso;
     }

@@ -1,4 +1,6 @@
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 import { useState } from "react";
 import { Box, Button, Typography, Stack, LinearProgress } from "@mui/material";
 import PageContainer from "../components/PageContainer";
@@ -15,6 +17,7 @@ function classificarRisco(pontuacao: number): { label: string; cor: string } {
   return { label: "Alto risco de fragilidade", cor: "#c62828" };
 }
 =======
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
 import { useState, useEffect, useRef } from "react";
 import {
   Box,
@@ -36,11 +39,16 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { questionarioApi } from "../api/questionarioApi";
 import type { Opcao, Pergunta, RespostaDTO } from "../api/types";
 import BackButton from "../components/BackButton";
+<<<<<<< HEAD
+=======
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
 
 export default function QuestionarioPage() {
   const navigate = useNavigate();
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
   // ⚠️ Verifique qual chave seu app usa: "user" ou "usuario"
   const usuario = JSON.parse(localStorage.getItem("user") || "null");
@@ -91,6 +99,7 @@ export default function QuestionarioPage() {
     },
     onError: (err: any) => {
 =======
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
   const [indiceAtual, setIndiceAtual] = useState(0);
   const [respostas, setRespostas] = useState<RespostaDTO[]>([]);
   const [showDebug, setShowDebug] = useState(false);
@@ -160,12 +169,17 @@ export default function QuestionarioPage() {
     },
     onError: (err: any) => {
       respondendoRef.current = false;
+<<<<<<< HEAD
+=======
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
       console.error("Erro ao enviar respostas:", err);
       alert("Erro ao enviar respostas. Veja o console.");
     },
   });
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
   if (isLoading) {
     return (
@@ -173,6 +187,7 @@ export default function QuestionarioPage() {
         <BackButton to="/saude" />
         <Typography>Carregando questionário...</Typography>
 =======
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
   if (!usuario) return null;
 
   // ── Carregando histórico inicial ────────────────────────────
@@ -276,7 +291,10 @@ export default function QuestionarioPage() {
           <CircularProgress size={24} />
           <Typography>Carregando questionário...</Typography>
         </Box>
+<<<<<<< HEAD
+=======
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
       </PageContainer>
     );
   }
@@ -286,10 +304,14 @@ export default function QuestionarioPage() {
       <PageContainer>
         <BackButton to="/saude" />
 <<<<<<< HEAD
+        <Typography color="error">Erro ao carregar perguntas.</Typography>
+=======
+<<<<<<< HEAD
         <Typography color="error" mb={2}>Erro ao carregar perguntas.</Typography>
 =======
         <Typography color="error">Erro ao carregar perguntas.</Typography>
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
         <Button onClick={() => refetch()}>Tentar novamente</Button>
       </PageContainer>
     );
@@ -304,6 +326,8 @@ export default function QuestionarioPage() {
     );
   }
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
   // Tela de resultado
   if (resultado) {
@@ -324,34 +348,46 @@ export default function QuestionarioPage() {
           </Button>
         </Box>
 =======
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
   const perguntaAtual: Pergunta | undefined = perguntas[indiceAtual];
 
   if (!perguntaAtual) {
     return (
       <PageContainer>
         <Typography>Questionário concluído ou pergunta inválida.</Typography>
+<<<<<<< HEAD
+=======
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
       </PageContainer>
     );
   }
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
   const perguntaAtual: Pergunta = perguntas[indiceAtual];
   const progresso = (indiceAtual / perguntas.length) * 100;
 
   const handleResponder = (opcao: Opcao) => {
 =======
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
   const handleResponder = (opcao: Opcao) => {
     if (respondendoRef.current) return;
     respondendoRef.current = true;
 
+<<<<<<< HEAD
+=======
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     const nova: RespostaDTO = {
       perguntaId: perguntaAtual.id,
       resposta: opcao.texto,
       peso: opcao.peso,
     };
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
     const novas = [...respostas, nova];
     setRespostas(novas);
@@ -361,6 +397,7 @@ export default function QuestionarioPage() {
       enviarMutation.mutate(novas);
     } else {
 =======
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     const semDuplicata = respostas.filter((r) => r.perguntaId !== perguntaAtual.id);
     const novas = [...semDuplicata, nova];
     setRespostas(novas);
@@ -370,22 +407,33 @@ export default function QuestionarioPage() {
       enviarMutation.mutate(novas);
     } else {
       respondendoRef.current = false;
+<<<<<<< HEAD
+=======
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
       setIndiceAtual((n) => n + 1);
     }
   };
 
+<<<<<<< HEAD
+  const bloqueado = enviarMutation.isLoading || respondendoRef.current;
+
+  // ── Questionário ────────────────────────────────────────────
+=======
 <<<<<<< HEAD
 =======
   const bloqueado = enviarMutation.isLoading || respondendoRef.current;
 
   // ── Questionário ────────────────────────────────────────────
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
   return (
     <PageContainer>
       <BackButton to="/saude" />
       <PageTitle>Questionário de Saúde</PageTitle>
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
       {/* Progresso */}
       <Box mb={3}>
@@ -429,6 +477,7 @@ export default function QuestionarioPage() {
         </Typography>
       )}
 =======
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
       <SectionTitle>
         Pergunta {indiceAtual + 1} de {perguntas.length}
       </SectionTitle>
@@ -473,7 +522,10 @@ export default function QuestionarioPage() {
           {respostas.length} respostas registradas
         </Typography>
       </Box>
+<<<<<<< HEAD
+=======
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     </PageContainer>
   );
 }

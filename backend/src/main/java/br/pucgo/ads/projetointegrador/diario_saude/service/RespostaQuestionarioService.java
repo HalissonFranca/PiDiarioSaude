@@ -2,12 +2,17 @@ package br.pucgo.ads.projetointegrador.diario_saude.service;
 
 import br.pucgo.ads.projetointegrador.diario_saude.entity.RespostaQuestionarioEntity;
 <<<<<<< HEAD
+import br.pucgo.ads.projetointegrador.diario_saude.repository.RespostaQuestionarioRepository;
+import br.pucgo.ads.projetointegrador.plataforma.entity.User; // ✅ trocado de UsuarioEntity
+=======
+<<<<<<< HEAD
 import br.pucgo.ads.projetointegrador.diario_saude.entity.UsuarioEntity;
 import br.pucgo.ads.projetointegrador.diario_saude.repository.RespostaQuestionarioRepository;
 =======
 import br.pucgo.ads.projetointegrador.diario_saude.repository.RespostaQuestionarioRepository;
 import br.pucgo.ads.projetointegrador.plataforma.entity.User; // ✅ trocado de UsuarioEntity
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,16 +28,22 @@ public class RespostaQuestionarioService {
     }
 
 <<<<<<< HEAD
+    public List<RespostaQuestionarioEntity> buscarPorUsuario(User usuario) {
+=======
+<<<<<<< HEAD
     public List<RespostaQuestionarioEntity> buscarPorUsuario(UsuarioEntity usuario) {
 =======
     public List<RespostaQuestionarioEntity> buscarPorUsuario(User usuario) {
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
         return respostaRepository.findByUsuario(usuario);
     }
 
     @Transactional
     public void salvarRespostas(List<RespostaQuestionarioEntity> respostas) {
         for (RespostaQuestionarioEntity r : respostas) {
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
             // verifica se já existe uma resposta para esse usuário e pergunta
             RespostaQuestionarioEntity existente = respostaRepository
@@ -54,6 +65,7 @@ public class RespostaQuestionarioService {
         List<RespostaQuestionarioEntity> respostas = buscarPorUsuario(usuario);
         return respostas.stream().mapToInt(RespostaQuestionarioEntity::getPeso).sum();
 =======
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
             respostaRepository
                     .findByUsuarioAndPergunta(r.getUsuario(), r.getPergunta())
                     .ifPresentOrElse(
@@ -73,6 +85,9 @@ public class RespostaQuestionarioService {
                 .stream()
                 .mapToInt(RespostaQuestionarioEntity::getPeso)
                 .sum();
+<<<<<<< HEAD
+=======
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     }
 }

@@ -4,9 +4,13 @@ import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import DescriptionIcon from '@mui/icons-material/Description';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 <<<<<<< HEAD
+import AssignmentIcon from '@mui/icons-material/Assignment';
+=======
+<<<<<<< HEAD
 =======
 import AssignmentIcon from '@mui/icons-material/Assignment';
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
 import { useNavigate } from 'react-router-dom';
 
 type Paciente = {
@@ -47,9 +51,12 @@ export function ModuleGridMedico({ paciente, prescricao }: { paciente: Paciente,
       onClick: () => navigate('/atendimento/doencas', { state: { paciente, prescricao } }),
     },
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 
 =======
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     {
       icon: <LocalHospitalIcon sx={{ fontSize: 40 }} color="warning" />,
       title: 'Alergias',
@@ -57,9 +64,12 @@ export function ModuleGridMedico({ paciente, prescricao }: { paciente: Paciente,
       onClick: () => navigate('/atendimento/alergias', { state: { paciente, prescricao } }),
     },
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
     
 =======
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     {
       icon: <DescriptionIcon sx={{ fontSize: 40 }} color="info" />,
       title: 'Histórico de Consultas',
@@ -67,15 +77,22 @@ export function ModuleGridMedico({ paciente, prescricao }: { paciente: Paciente,
       onClick: () => navigate('/atendimento/historico-medico', { state: { paciente } }),
     },
 <<<<<<< HEAD
+
+=======
+<<<<<<< HEAD
 =======
     // ✅ Novo card — Questionário de Saúde do paciente
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     {
       icon: <AssignmentIcon sx={{ fontSize: 40 }} color="primary" />,
       title: 'Questionário de Saúde',
       desc: 'Visualizar respostas e pontuação do questionário do paciente.',
       onClick: () => navigate('/respostas_questionario', { state: { paciente, prescricao } }),
     },
+<<<<<<< HEAD
+=======
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
   ];
 
   return (
@@ -101,5 +118,9 @@ export function ModuleGridMedico({ paciente, prescricao }: { paciente: Paciente,
 <<<<<<< HEAD
 }
 =======
+<<<<<<< HEAD
+}
+=======
 }
 >>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829

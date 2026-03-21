@@ -28,13 +28,14 @@ public class PrescricaoExameController {
     private PrescricaoMedicaRepository prescricaoMedicaRepository;
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody PrescricaoExameDTO dto){
+    public ResponseEntity<?> save(@RequestBody PrescricaoExameDTO dto) {
         PrescricaoExameEntity entity = new PrescricaoExameEntity(dto);
 
         ExameEntity exame = exameRepository.findById(dto.getId_exame()).orElse(null);
-        PrescricaoMedicaEntity prescricaoMedica = prescricaoMedicaRepository.findById(dto.getId_prescricao_medica()).orElse(null);
+        PrescricaoMedicaEntity prescricaoMedica = prescricaoMedicaRepository.findById(dto.getId_prescricao_medica())
+                .orElse(null);
 
-        if(exame == null || prescricaoMedica == null){
+        if (exame == null || prescricaoMedica == null) {
             return ResponseEntity.badRequest().body("Exame ou Prescrição Médica não encontrado.");
         }
 
@@ -44,14 +45,13 @@ public class PrescricaoExameController {
         return ResponseEntity.ok(service.save(entity));
     }
 
-
     @GetMapping
-    public ResponseEntity<List<PrescricaoExameEntity>> findAll(){
+    public ResponseEntity<List<PrescricaoExameEntity>> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable long id){
+    public ResponseEntity<Void> delete(@PathVariable long id) {
         service.delete(id);
         return ResponseEntity.ok().build();
     }

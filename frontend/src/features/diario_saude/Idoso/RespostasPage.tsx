@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-import { useQuery } from "@tanstack/react-query";
-import { Box, Typography, Stack } from "@mui/material";
-import PageContainer from "../components/PageContainer";
-import PageTitle from "../components/PageTitle";
-import SectionTitle from "../components/SectionTitle";
-
-import { questionarioApi } from "../api/questionarioApi";
-import type { RespostaDTO } from "../api/types";
-import BackButton from "../components/BackButton";
-
-export default function RespostasPage() {
-  const usuario = JSON.parse(localStorage.getItem("usuario") || "null");
-  if (!usuario) return null;
-=======
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Box, Typography, Stack, Paper, Divider, Chip } from "@mui/material";
@@ -28,6 +13,7 @@ export default function RespostasPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
+
   const usuarioLogado = (() => {
     try {
       return (
@@ -39,40 +25,24 @@ export default function RespostasPage() {
     }
   })();
 
-  const role = usuarioLogado?.roleName ?? usuarioLogado?.role ?? "";
-
-  // ✅ Médico recebe o paciente via navigation state (vindo do dashboard)
-  // ✅ Cuidador/Admin vê as respostas do próprio usuário logado
-  const isMedico = role === "ROLE_MEDICO";
-  const isCuidadorOuAdmin = role === "ROLE_CUIDADOR" || role === "ROLE_ADMIN";
-
-  const pacienteViaMedico = location.state?.paciente;
-
-  // Para cuidador/admin, o "paciente" é o próprio usuário logado
-  const paciente = isMedico
-    ? pacienteViaMedico
-    : isCuidadorOuAdmin
-      ? { id_usuario: usuarioLogado?.id_usuario ?? usuarioLogado?.userId, nome: usuarioLogado?.name ?? usuarioLogado?.nome }
-      : null;
+  const paciente = location.state?.paciente;
 
   useEffect(() => {
     if (!usuarioLogado) {
       navigate("/login");
       return;
     }
-    // ✅ Idoso não acessa — só médico, cuidador e admin
-    if (!isMedico && !isCuidadorOuAdmin) {
+    const role = usuarioLogado?.roleName ?? usuarioLogado?.role;
+    if (role !== "ROLE_MEDICO") {
       navigate("/home");
       return;
     }
-    // ✅ Médico sem paciente selecionado vai para seleção
-    if (isMedico && !pacienteViaMedico) {
+    if (!paciente) {
       navigate("/medico");
     }
   }, []);
 
   const pacienteId = paciente?.id_usuario;
->>>>>>> 642918d614cd2e5e6344c70451602c5148974576
 
   const {
     data: respostas = [],
@@ -80,17 +50,6 @@ export default function RespostasPage() {
     isError,
     refetch,
   } = useQuery({
-<<<<<<< HEAD
-    queryKey: ["questionario", "respostas", usuario.id_usuario],
-    queryFn: () => questionarioApi.obterRespostas(usuario.id_usuario),
-    refetchOnWindowFocus: false,
-  });
-
-  if (isLoading) {
-    return (
-      <PageContainer>
-        <BackButton to="/saude" />
-=======
     queryKey: ["questionario", "respostas", pacienteId],
     queryFn: () => questionarioApi.obterRespostas(pacienteId),
     refetchOnWindowFocus: false,
@@ -99,14 +58,10 @@ export default function RespostasPage() {
 
   if (!usuarioLogado || !paciente) return null;
 
-  // ✅ Destino do botão voltar depende do role
-  const backTo = isMedico ? "/atendimento/dashboard" : "/saude";
-
   if (isLoading) {
     return (
       <PageContainer>
-        <BackButton to={backTo} />
->>>>>>> 642918d614cd2e5e6344c70451602c5148974576
+        <BackButton to="/atendimento/dashboard" />
         <Typography>Carregando respostas...</Typography>
       </PageContainer>
     );
@@ -115,19 +70,7 @@ export default function RespostasPage() {
   if (isError) {
     return (
       <PageContainer>
-<<<<<<< HEAD
-        <BackButton to="/saude" />
-        <Typography color="error">Erro ao carregar respostas.</Typography>
-        <Box mt={2}>
-          <Typography
-            sx={{ cursor: "pointer", textDecoration: "underline" }}
-            onClick={() => refetch()}
-          >
-            Tentar novamente
-          </Typography>
-        </Box>
-=======
-        <BackButton to={backTo} />
+        <BackButton to="/atendimento/dashboard" />
         <Typography color="error">Erro ao carregar respostas.</Typography>
         <Typography
           sx={{ cursor: "pointer", textDecoration: "underline", mt: 1 }}
@@ -135,7 +78,6 @@ export default function RespostasPage() {
         >
           Tentar novamente
         </Typography>
->>>>>>> 642918d614cd2e5e6344c70451602c5148974576
       </PageContainer>
     );
   }
@@ -143,107 +85,43 @@ export default function RespostasPage() {
   if (respostas.length === 0) {
     return (
       <PageContainer>
-<<<<<<< HEAD
-        <BackButton to="/saude" />
-        <Typography>Nenhuma resposta registrada.</Typography>
-=======
-        <BackButton to={backTo} />
+        <BackButton to="/atendimento/dashboard" />
         <PageTitle>Questionário de Saúde</PageTitle>
         <Typography color="text.secondary">
-          {isMedico
-            ? <>O paciente <strong>{paciente.nome}</strong> ainda não respondeu o questionário.</>
-            : "Nenhuma resposta registrada ainda."}
+          O paciente <strong>{paciente.nome}</strong> ainda não respondeu o questionário.
         </Typography>
->>>>>>> 642918d614cd2e5e6344c70451602c5148974576
       </PageContainer>
     );
   }
 
-<<<<<<< HEAD
-  // Ordena as respostas pelo id da pergunta
-  const respostasOrdenadas = respostas.slice().sort(
-    (a, b) => a.perguntaId - b.perguntaId
-  );
-
-  // Calcula pontuação total
-  const pontuacaoTotal = respostasOrdenadas.reduce((acc, r) => acc + r.peso, 0);
-
-  // Interpretação baseada na pontuação
-  let interpretacao = "";
-  if (pontuacaoTotal <= 6) interpretacao = "baixa vulnerabilidade clínico funcional";
-  else if (pontuacaoTotal <= 10) interpretacao = "moderada vulnerabilidade clínico funcional";
-  else interpretacao = "alta vulnerabilidade clínico funcional";
-
-  return (
-    <PageContainer>
-      <BackButton to="/saude" />
-      <PageTitle>Respostas do Questionário</PageTitle>
-
-      <Box mb={3} p={2} border="1px solid #ccc" borderRadius={2}>
-        <Typography variant="h6">
-          Pontuação total: {pontuacaoTotal} pontos
-        </Typography>
-        <Typography color="text.secondary">{interpretacao}</Typography>
-      </Box>
-
-      <Stack spacing={3}>
-        {respostasOrdenadas.map(
-          (r: RespostaDTO & { pergunta: any }, idx) => (
-            <Box
-              key={r.perguntaId}
-              p={2}
-              border="1px solid #ccc"
-              borderRadius={2}
-            >
-              <SectionTitle>Pergunta {idx + 1}</SectionTitle>
-              <Typography mb={1}>
-                <strong>Texto:</strong> {r.pergunta.texto}
-              </Typography>
-              <Typography mb={1}>
-                <strong>Resposta:</strong> {r.resposta}
-              </Typography>
-              <Typography color="text.secondary">
-                <strong>Peso:</strong> {r.peso}
-              </Typography>
-            </Box>
-          )
-        )}
-      </Stack>
-    </PageContainer>
-  );
-}
-=======
   const respostasOrdenadas = respostas.slice().sort((a, b) => a.perguntaId - b.perguntaId);
   const pontuacaoTotal = respostasOrdenadas.reduce((acc, r) => acc + r.peso, 0);
 
   const classificacao = (() => {
     if (pontuacaoTotal <= 6)
-      return { label: "Robusto", color: "#2e7d32", descricao: "Baixa vulnerabilidade clinico-funcional." };
+      return { label: "Robusto", color: "#2e7d32", descricao: "Baixa vulnerabilidade clínico-funcional." };
     if (pontuacaoTotal <= 14)
-      return { label: "Em risco", color: "#f57c00", descricao: "Vulnerabilidade leve — atencao recomendada." };
+      return { label: "Em risco", color: "#f57c00", descricao: "Vulnerabilidade leve — atenção recomendada." };
     if (pontuacaoTotal <= 20)
-      return { label: "Moderadamente fragil", color: "#e65100", descricao: "Vulnerabilidade moderada." };
-    return { label: "Altamente fragil", color: "#c62828", descricao: "Alta vulnerabilidade clinico-funcional." };
+      return { label: "Moderadamente frágil", color: "#e65100", descricao: "Vulnerabilidade moderada." };
+    return { label: "Altamente frágil", color: "#c62828", descricao: "Alta vulnerabilidade clínico-funcional." };
   })();
 
   return (
     <PageContainer>
-      <BackButton to={backTo} />
+      <BackButton to="/atendimento/dashboard" />
       <PageTitle>Questionário de Saúde</PageTitle>
 
+      {/* Cabeçalho com paciente e pontuação */}
       <Paper elevation={2} sx={{ p: 3, borderRadius: 3, mb: 3 }}>
-        {/* Só mostra nome do paciente para médico */}
-        {isMedico && (
-          <>
-            <Typography variant="subtitle1" color="text.secondary" mb={1}>
-              Paciente
-            </Typography>
-            <Typography variant="h6" fontWeight={700} mb={2}>
-              {paciente.nome}
-            </Typography>
-            <Divider sx={{ mb: 2 }} />
-          </>
-        )}
+        <Typography variant="subtitle1" color="text.secondary" mb={1}>
+          Paciente
+        </Typography>
+        <Typography variant="h6" fontWeight={700} mb={2}>
+          {paciente.nome}
+        </Typography>
+
+        <Divider sx={{ mb: 2 }} />
 
         <Typography variant="subtitle1" color="text.secondary" mb={1}>
           Pontuação total
@@ -254,7 +132,8 @@ export default function RespostasPage() {
         <Chip
           label={classificacao.label}
           sx={{
-            mt: 1, mb: 0.5,
+            mt: 1,
+            mb: 0.5,
             bgcolor: classificacao.color,
             color: "white",
             fontWeight: 700,
@@ -266,6 +145,7 @@ export default function RespostasPage() {
         </Typography>
       </Paper>
 
+      {/* Lista de respostas */}
       <SectionTitle>Respostas ({respostasOrdenadas.length} perguntas)</SectionTitle>
 
       <Stack spacing={2} mt={2}>
@@ -293,4 +173,3 @@ export default function RespostasPage() {
     </PageContainer>
   );
 }
->>>>>>> 642918d614cd2e5e6344c70451602c5148974576

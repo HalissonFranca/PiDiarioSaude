@@ -5,6 +5,8 @@ import br.pucgo.ads.projetointegrador.diario_saude.entity.PerguntaEntity;
 import br.pucgo.ads.projetointegrador.diario_saude.repository.PerguntaRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,10 +26,7 @@ public class PerguntaController {
     }
 
     // Retorna todas as perguntas
-<<<<<<< HEAD
-=======
 
->>>>>>> 642918d614cd2e5e6344c70451602c5148974576
     @GetMapping("/perguntas")
     public List<PerguntaDTO> listarPerguntas() {
         List<PerguntaEntity> perguntas = perguntaRepository.findAll();
@@ -35,24 +34,15 @@ public class PerguntaController {
         return perguntas.stream().map(p -> {
             Map<String, Integer> opcoesMap = null;
             try {
-<<<<<<< HEAD
-                opcoesMap = objectMapper.readValue(p.getOpcoesJson(), new TypeReference<Map<String, Integer>>() {});
-=======
                 opcoesMap = objectMapper.readValue(p.getOpcoesJson(), new TypeReference<Map<String, Integer>>() {
                 });
->>>>>>> 642918d614cd2e5e6344c70451602c5148974576
             } catch (Exception e) {
                 e.printStackTrace();
             }
             return new PerguntaDTO(
                     p.getId(),
                     p.getTexto(),
-<<<<<<< HEAD
-                    opcoesMap
-            );
-=======
                     opcoesMap);
->>>>>>> 642918d614cd2e5e6344c70451602c5148974576
         }).collect(Collectors.toList());
     }
 
@@ -60,5 +50,26 @@ public class PerguntaController {
     @PostMapping("/perguntas")
     public PerguntaEntity adicionarPergunta(@RequestBody PerguntaEntity pergunta) {
         return perguntaRepository.save(pergunta);
+    }
+
+    @PutMapping("/perguntas/{id}")
+    public ResponseEntity<PerguntaEntity> editarPergunta(
+            @PathVariable Long id,
+            @RequestBody PerguntaEntity dados) {
+
+        return perguntaRepository.findById(id).map(pergunta -> {
+            pergunta.setTexto(dados.getTexto());
+            pergunta.setOpcoesJson(dados.getOpcoesJson());
+            return ResponseEntity.ok(perguntaRepository.save(pergunta));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/perguntas/{id}")
+    public ResponseEntity<Void> deletarPergunta(@PathVariable Long id) {
+        if (!perguntaRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        perguntaRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
