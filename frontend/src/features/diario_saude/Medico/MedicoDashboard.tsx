@@ -1,11 +1,20 @@
 import { useState, useEffect } from "react";
 import {
+<<<<<<< HEAD
     Box,
     Paper,
     Typography,
     TextField,
     Button,
     Container,
+=======
+  Box,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  Container,
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ModuleGridMedico } from "@/features/diario_saude/components/ModuleGridMedico";
@@ -51,7 +60,11 @@ export default function DashboardMedico() {
     // ainda não executou a navegação), retorne null temporariamente para evitar erros
     // de acesso a propriedades (como paciente.id_usuario) no restante do componente.
     if (!paciente || !prescricao) {
+<<<<<<< HEAD
         return null;
+=======
+        return null; 
+>>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     }
 
     // -----------------------------

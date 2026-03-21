@@ -21,11 +21,9 @@ public class AlergiaController {
 
         AlergiaEntity alergia = new AlergiaEntity();
 
-        // JSON → ENTITY
         alergia.setCodigo(dto.getCode());
         alergia.setNome(dto.getDisplay());
 
-        // Extrair "categoria" de property.valueCode
         String categoria = null;
 
         if (dto.getProperty() != null) {
@@ -45,6 +43,7 @@ public class AlergiaController {
     public List<AlergiaEntity> listar() {
         return service.listar();
     }
+
     @PostMapping("/criar-multiplas")
     public List<AlergiaEntity> criarMultiplas(@RequestBody List<AlergiaDTO> alergias) {
         return service.criarMultiplas(alergias);
