@@ -15,29 +15,12 @@ import jakarta.persistence.Table;
 import java.util.List;
 import jakarta.persistence.OneToMany;
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-
-=======
->>>>>>> 642918d614cd2e5e6344c70451602c5148974576
->>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
 @Entity
 @Table(name = "usuario_info_clinica")
 public class UsuarioEntity {
 
-<<<<<<< HEAD
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-=======
-<<<<<<< HEAD
-    @Id//chave primária
-    @GeneratedValue(strategy = GenerationType.IDENTITY)//auto incremental
-=======
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
->>>>>>> 642918d614cd2e5e6344c70451602c5148974576
->>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     @Column(name = "id_usuario")
     private long idUsuario;
 
@@ -53,18 +36,6 @@ public class UsuarioEntity {
     @Column(nullable = false)
     private float altura;
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-    @Column(name = "user_id")
-    private Long userId;
-
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
-
-=======
->>>>>>> 642918d614cd2e5e6344c70451602c5148974576
->>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     @OneToMany(mappedBy = "usuario")
     @JsonIgnore
     private List<PrescricaoMedicaEntity> prescricoesMedicas;
@@ -73,32 +44,11 @@ public class UsuarioEntity {
     @JsonIgnore
     private List<UsuarioDoencasEntity> usuarioDoencas;
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<RespostaQuestionarioEntity> respostasQuestionario;
-
-    public UsuarioEntity(UsuarioDTO usuario){
-        BeanUtils.copyProperties(usuario, this);
-    }
-    public UsuarioEntity(){
-        
-=======
->>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
-    // ✅ Removido @OneToMany de respostasQuestionario —
-    // o questionário agora usa User (tabela 'users') como dono do relacionamento
-
     public UsuarioEntity(UsuarioDTO usuario) {
         BeanUtils.copyProperties(usuario, this);
     }
 
     public UsuarioEntity() {
-<<<<<<< HEAD
-=======
->>>>>>> 642918d614cd2e5e6344c70451602c5148974576
->>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     }
 
     @Override
@@ -118,25 +68,7 @@ public class UsuarioEntity {
         if (getClass() != obj.getClass())
             return false;
         UsuarioEntity other = (UsuarioEntity) obj;
-<<<<<<< HEAD
         return idUsuario == other.idUsuario;
-=======
-<<<<<<< HEAD
-        if (idUsuario != other.idUsuario)
-            return false;
-        return true;
-    }
-
-    public List<RespostaQuestionarioEntity> getRespostasQuestionario() {
-        return respostasQuestionario;
-    }
-
-    public void setRespostasQuestionario(List<RespostaQuestionarioEntity> respostasQuestionario) {
-        this.respostasQuestionario = respostasQuestionario;
-=======
-        return idUsuario == other.idUsuario;
->>>>>>> 642918d614cd2e5e6344c70451602c5148974576
->>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
     }
 
     public long getId_usuario() {
@@ -178,26 +110,6 @@ public class UsuarioEntity {
     public void setAltura(float altura) {
         this.altura = altura;
     }
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-    
-    public List<PrescricaoMedicaEntity> getPrescricoesMedicas() {
-        return prescricoesMedicas;
-    }
-    public void setPrescricoesMedicas(List<PrescricaoMedicaEntity> prescricoesMedicas) {
-        this.prescricoesMedicas = prescricoesMedicas;
-    }
-    public List<UsuarioDoencasEntity> getUsuarioDoencas() {
-        return usuarioDoencas;
-    }
-    public void setUsuarioDoencas(List<UsuarioDoencasEntity> usuarioDoencas) {
-        this.usuarioDoencas = usuarioDoencas;
-    }
-    
-}
-=======
->>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
 
     public List<PrescricaoMedicaEntity> getPrescricoesMedicas() {
         return prescricoesMedicas;
@@ -214,9 +126,4 @@ public class UsuarioEntity {
     public void setUsuarioDoencas(List<UsuarioDoencasEntity> usuarioDoencas) {
         this.usuarioDoencas = usuarioDoencas;
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 642918d614cd2e5e6344c70451602c5148974576
->>>>>>> 8d723c75dea8e98c051b7ee5bdebfd20b5e0e829
