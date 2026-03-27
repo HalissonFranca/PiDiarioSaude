@@ -4,6 +4,7 @@ export type Usuario = {
   idade: number;
   peso: number;
   altura: number;
+  role?: string;
 };
 
 export type Opcao = {
@@ -88,7 +89,7 @@ export type Medico = {
 
 export type Medicamento = {
   id?: number;
-  id_medicamento?: number; 
+  id_medicamento?: number;
   nome?: string;
   principio_ativo?: string;
   concentracao?: string;
@@ -120,3 +121,10 @@ export type Prescricao = {
   medicamentos: PrescricaoMedicamento[];
   exames: PrescricaoExame[];
 };
+
+export type CriarPrescricaoDTO = {
+  id_medico: number;
+  id_usuario: number;
+  descricao: string;
+};
+

@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 
 import { useQuery, useMutation } from "@tanstack/react-query";
-import type { Prescricao } from "../api/prescricaoApi";
+import type { Prescricao, CriarPrescricaoDTO } from "../api/types";
 import http from "@/lib/http";
 
 // --------------------------
@@ -30,10 +30,11 @@ function PageTitle({ children }: { children: React.ReactNode }) {
 // --------------------------
 // API de pacientes
 // --------------------------
+// ✅ busca só idosos da tabela users
 const usuarioApi = {
   listar: async (): Promise<any[]> => {
     const token = localStorage.getItem("token");
-    const { data } = await http.get("/api/diario_saude/usuario", {
+    const { data } = await http.get("/api/diario_saude/usuario/pacientes", {
       headers: { Authorization: `Bearer ${token}` },
     });
     return Array.isArray(data) ? data : [];
@@ -45,7 +46,16 @@ const usuarioApi = {
 // --------------------------
 export default function IniciarConsulta() {
   const navigate = useNavigate();
-  const usuario = JSON.parse(localStorage.getItem("usuarioLogado") || "null");
+  const usuario = (() => {
+    try {
+      return (
+        JSON.parse(localStorage.getItem("usuario") || "null") ||
+        JSON.parse(localStorage.getItem("user") || "null")
+      );
+    } catch {
+      return null;
+    }
+  })();
   const token = localStorage.getItem("token");
 
   const [search, setSearch] = useState("");
@@ -67,15 +77,34 @@ export default function IniciarConsulta() {
   // --------------------------
   // Criar prescricao
   // --------------------------
+
   const startConsultaMutation = useMutation({
     mutationFn: async (pacienteSelecionado: any) => {
       if (!usuario) throw new Error("Usuário não logado");
 
-      const payload = {
+      if (!pacienteSelecionado) {
+        throw new Error("Nenhum paciente selecionado");
+      }
+
+      if (!pacienteSelecionado.id_usuario) {
+        console.error("Paciente inválido:", pacienteSelecionado);
+        throw new Error("Paciente sem id_usuario");
+      }
+
+      if (!usuario.id_usuario) {
+        console.error("Usuário inválido:", usuario);
+        throw new Error("Médico sem id_usuario");
+      }
+
+      const payload: CriarPrescricaoDTO = {
         id_medico: usuario.id_usuario,
         id_usuario: pacienteSelecionado.id_usuario,
         descricao: "Consulta iniciada",
       };
+
+      console.log("👤 Usuário logado:", usuario);
+      console.log("🧓 Paciente selecionado:", pacienteSelecionado);
+      console.log("📦 Payload FINAL:", payload);
 
       const { data } = await http.post("/api/diario_saude/prescricao", payload, {
         headers: { Authorization: `Bearer ${token}` },
@@ -83,12 +112,23 @@ export default function IniciarConsulta() {
 
       return data as Prescricao;
     },
+
     onSuccess: (prescricao, pacienteSelecionado) => {
-      navigate("/atendimento/dashboard", { state: { paciente: pacienteSelecionado, prescricao } });
+      navigate("/atendimento/dashboard", {
+        state: { paciente: pacienteSelecionado, prescricao },
+      });
     },
-    onError: (err) => {
+
+    onError: (err: any) => {
       console.error("❌ Erro ao iniciar consulta:", err);
-      alert("Erro ao iniciar a consulta.");
+
+      // 🔥 MOSTRA O ERRO REAL DO BACKEND
+      if (err?.response?.data) {
+        console.error("📛 Backend respondeu:", err.response.data);
+        alert(err.response.data.message || "Erro no servidor");
+      } else {
+        alert("Erro ao iniciar a consulta.");
+      }
     },
   });
 
@@ -139,10 +179,10 @@ export default function IniciarConsulta() {
           <Button
             variant="contained"
             size="large"
-            disabled={!selectedPaciente || startConsultaMutation.isLoading}
+            disabled={!selectedPaciente || startConsultaMutation.isPending}
             onClick={handleStartConsulta}
           >
-            {startConsultaMutation.isLoading ? "Iniciando..." : "Iniciar Consulta"}
+            {startConsultaMutation.isPending ? "Iniciando..." : "Iniciar Consulta"}
           </Button>
         </Box>
       </Paper>

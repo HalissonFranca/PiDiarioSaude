@@ -8,33 +8,55 @@ import org.springframework.stereotype.Service;
 import br.pucgo.ads.projetointegrador.diario_saude.repository.UsuarioRepository;
 import br.pucgo.ads.projetointegrador.diario_saude.dto.UsuarioDTO;
 import br.pucgo.ads.projetointegrador.diario_saude.entity.UsuarioEntity;
+// ✅ imports novos
+import br.pucgo.ads.projetointegrador.plataforma.entity.User;
+import br.pucgo.ads.projetointegrador.plataforma.repository.UserRepository;
 
 @Service
 public class UsuarioService {
-    @Autowired//Instanciar automaticamente
+
+    @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public List<UsuarioDTO> listarTodos(){
+    @Autowired
+    private UserRepository userRepository; // ✅ novo
+
+    public List<UsuarioDTO> listarTodos() {
         List<UsuarioEntity> usuarios = usuarioRepository.findAll();
-        return usuarios.stream().map(UsuarioDTO::new).toList();//Converte a lista de usuarios para usuarioDTO
+        return usuarios.stream().map(UsuarioDTO::new).toList();
     }
 
-    public void inserir(UsuarioDTO usuario){
+    // ✅ inserir agora vincula o User se userId vier no body
+    public void inserir(UsuarioDTO usuario) {
         UsuarioEntity usuarioEntity = new UsuarioEntity(usuario);
+
+        if (usuario.getUserId() != null) {
+            User user = userRepository.findById(usuario.getUserId())
+                    .orElseThrow(() -> new RuntimeException("User não encontrado: id=" + usuario.getUserId()));
+            usuarioEntity.setUser(user);
+        }
+
         usuarioRepository.save(usuarioEntity);
     }
 
-    public UsuarioDTO alterar(UsuarioDTO usuario){
+    public UsuarioDTO alterar(UsuarioDTO usuario) {
         UsuarioEntity usuarioEntity = new UsuarioEntity(usuario);
         return new UsuarioDTO(usuarioRepository.save(usuarioEntity));
     }
 
-    public void excluir(Long id){
+    public void excluir(Long id) {
         UsuarioEntity usuario = usuarioRepository.findById(id).get();
         usuarioRepository.delete(usuario);
     }
 
-    public UsuarioDTO buscarPorId(Long id){
+    public UsuarioDTO buscarPorId(Long id) {
         return new UsuarioDTO(usuarioRepository.findById(id).get());
+    }
+
+    public List<UsuarioDTO> listarIdosos() {
+        return usuarioRepository.findAllIdosos()
+                .stream()
+                .map(UsuarioDTO::new)
+                .toList();
     }
 }

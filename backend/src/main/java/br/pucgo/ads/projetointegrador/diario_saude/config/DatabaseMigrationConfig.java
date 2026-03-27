@@ -6,12 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-/**
- * Corrige automaticamente a FK da tabela ds_resposta_questionario
- * para apontar para 'users' em vez de 'usuario_info_clinica'.
- *
- * Executa uma única vez no startup, somente se a FK antiga ainda existir.
- */
 @Component
 public class DatabaseMigrationConfig {
 
@@ -24,9 +18,14 @@ public class DatabaseMigrationConfig {
     }
 
     @PostConstruct
-    public void corrigirFkRespostaQuestionario() {
+    public void executarMigracoes() {
+        corrigirFkRespostaQuestionario(); // ✅ método abaixo
+        adicionarFkUsuarioInfoClinica(); // ✅ método abaixo
+    }
+
+    // ── Correção original do projeto ─────────────────────────────────────────
+    private void corrigirFkRespostaQuestionario() {
         try {
-            // Verifica se a FK antiga ainda existe
             Integer count = jdbcTemplate.queryForObject("""
                     SELECT COUNT(*) FROM information_schema.table_constraints
                     WHERE table_name = 'ds_resposta_questionario'
@@ -54,6 +53,38 @@ public class DatabaseMigrationConfig {
 
         } catch (Exception e) {
             log.warn("[Questionário] Não foi possível verificar/corrigir FK: {}", e.getMessage());
+        }
+    }
+
+    private void adicionarFkUsuarioInfoClinica() {
+        try {
+            Integer count = jdbcTemplate.queryForObject("""
+                    SELECT COUNT(*) FROM information_schema.table_constraints
+                    WHERE table_name = 'usuario_info_clinica'
+                      AND constraint_name = 'fk_usuario_info_clinica_user'
+                    """, Integer.class);
+
+            if (count != null && count == 0) {
+                log.info("[UsuarioInfo] Adicionando coluna user_id e FK para users...");
+
+                jdbcTemplate.execute("""
+                        ALTER TABLE usuario_info_clinica
+                        ADD COLUMN IF NOT EXISTS user_id BIGINT
+                        """);
+
+                jdbcTemplate.execute("""
+                        ALTER TABLE usuario_info_clinica
+                        ADD CONSTRAINT fk_usuario_info_clinica_user
+                        FOREIGN KEY (user_id) REFERENCES users(id)
+                        """);
+
+                log.info("[UsuarioInfo] FK adicionada com sucesso.");
+            } else {
+                log.debug("[UsuarioInfo] FK já existe, nenhuma ação necessária.");
+            }
+
+        } catch (Exception e) {
+            log.warn("[UsuarioInfo] Não foi possível adicionar FK: {}", e.getMessage());
         }
     }
 }

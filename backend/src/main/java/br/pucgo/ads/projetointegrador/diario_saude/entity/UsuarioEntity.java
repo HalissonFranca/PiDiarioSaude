@@ -14,6 +14,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.List;
 import jakarta.persistence.OneToMany;
+import br.pucgo.ads.projetointegrador.plataforma.entity.User;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 
 @Entity
 @Table(name = "usuario_info_clinica")
@@ -35,6 +38,10 @@ public class UsuarioEntity {
 
     @Column(nullable = false)
     private float altura;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = true)
+    private User user;
 
     @OneToMany(mappedBy = "usuario")
     @JsonIgnore
@@ -109,6 +116,14 @@ public class UsuarioEntity {
 
     public void setAltura(float altura) {
         this.altura = altura;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public List<PrescricaoMedicaEntity> getPrescricoesMedicas() {
