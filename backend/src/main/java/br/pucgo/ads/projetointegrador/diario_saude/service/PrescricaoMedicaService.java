@@ -9,9 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.pucgo.ads.projetointegrador.diario_saude.dto.PrescricaoMedicaDTO;
 import br.pucgo.ads.projetointegrador.diario_saude.entity.PrescricaoMedicaEntity;
-import br.pucgo.ads.projetointegrador.diario_saude.repository.MedicoRepository;
 import br.pucgo.ads.projetointegrador.diario_saude.repository.UsuarioRepository;
 import br.pucgo.ads.projetointegrador.diario_saude.repository.PrescricaoMedicaRepository;
+import br.pucgo.ads.projetointegrador.plataforma.repository.UserRepository;
 
 @Service
 public class PrescricaoMedicaService {
@@ -20,12 +20,12 @@ public class PrescricaoMedicaService {
     private PrescricaoMedicaRepository repo;
 
     @Autowired
-    private MedicoRepository medicoRepo;
+    private UserRepository userRepo;
 
     @Autowired
     private UsuarioRepository usuarioRepo;
 
-    public List<PrescricaoMedicaDTO> listarTodos(){
+    public List<PrescricaoMedicaDTO> listarTodos() {
         return repo.findAll().stream().map(PrescricaoMedicaDTO::new).toList();
     }
 
@@ -33,27 +33,27 @@ public class PrescricaoMedicaService {
 
         PrescricaoMedicaEntity entity = new PrescricaoMedicaEntity(dto);
 
-        entity.setMedico(medicoRepo.findById(dto.getId_medico())
-            .orElseThrow(() -> new RuntimeException("Médico não encontrado")));
+        entity.setMedico(userRepo.findById(dto.getId_medico())
+                .orElseThrow(() -> new RuntimeException("Médico não encontrado")));
 
         entity.setUsuario(usuarioRepo.findById(dto.getId_usuario())
-            .orElseThrow(() -> new RuntimeException("Usuário não encontrado")));
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado")));
 
         entity.setData_prescricao(LocalDate.now().toString());
 
         return new PrescricaoMedicaDTO(repo.save(entity));
     }
 
-    public PrescricaoMedicaDTO alterar(PrescricaoMedicaDTO dto){
+    public PrescricaoMedicaDTO alterar(PrescricaoMedicaDTO dto) {
         return inserir(dto);
     }
 
-    public void excluir(Long id){
+    public void excluir(Long id) {
         repo.deleteById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<PrescricaoMedicaDTO> listarPorUsuario(Long idUsuario){
+    public List<PrescricaoMedicaDTO> listarPorUsuario(Long idUsuario) {
         return repo.findByUsuario(idUsuario).stream().map(PrescricaoMedicaDTO::new).toList();
     }
 }

@@ -32,32 +32,12 @@ export const questionarioApi = {
     return data;
   },
 
-  obterRespostas: async (
-    usuarioId: number
-  ): Promise<(RespostaDTO & { pergunta: Pergunta })[]> => {
+  obterRespostas: async (usuarioId: number) => {
     const token = localStorage.getItem("token");
     const { data } = await http.get(`${base}/respostas/${usuarioId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-
-    return Array.isArray(data)
-      ? data.map((r: any) => ({
-        // Adiciona perguntaId para satisfazer RespostaDTO
-        perguntaId: r.pergunta?.id,
-        resposta: r.resposta,
-        peso: r.peso,
-        // mantém o objeto pergunta completo
-        pergunta: r.pergunta
-          ? {
-            id: r.pergunta.id,
-            texto: r.pergunta.texto,
-            opcoes: Array.isArray(r.pergunta.opcoes)
-              ? r.pergunta.opcoes.map((o: any) => ({ texto: o.texto, peso: o.peso }))
-              : [],
-          }
-          : { id: 0, texto: "Pergunta não encontrada", opcoes: [] }, // fallback
-      }))
-      : [];
+    return Array.isArray(data) ? data : [];
   },
 
   criarPergunta: async (texto: string, opcoesJson: string) => {

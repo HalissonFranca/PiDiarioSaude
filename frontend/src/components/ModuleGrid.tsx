@@ -14,7 +14,7 @@ import CoronavirusIcon from '@mui/icons-material/Coronavirus';
 
 export function ModuleGrid() {
   const navigate = useNavigate();
-  
+
 
   const items = [
     {
@@ -48,13 +48,6 @@ export function ModuleGrid() {
       title: 'Meu Perfil',
       desc: 'Atualize seus dados de médico.',
       to: '/informacoes_medico',
-    },
-    
-    {
-      icon: <PersonSearchIcon sx={{ fontSize: 40 }} color="primary" />,
-      title: 'Iniciar Consulta',
-      desc: 'Selecione o paciente para iniciar o atendimento.',
-      to: '/medico',
     },
 
     {

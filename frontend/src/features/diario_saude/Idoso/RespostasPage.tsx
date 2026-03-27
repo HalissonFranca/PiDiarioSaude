@@ -12,6 +12,7 @@ import { questionarioApi } from "../api/questionarioApi";
 export default function RespostasPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const origem = location.state?.origem;
 
 
   const usuarioLogado = (() => {
@@ -61,7 +62,7 @@ export default function RespostasPage() {
   if (isLoading) {
     return (
       <PageContainer>
-        <BackButton to="/atendimento/dashboard" />
+        <BackButton />
         <Typography>Carregando respostas...</Typography>
       </PageContainer>
     );
@@ -70,7 +71,7 @@ export default function RespostasPage() {
   if (isError) {
     return (
       <PageContainer>
-        <BackButton to="/atendimento/dashboard" />
+        <BackButton />
         <Typography color="error">Erro ao carregar respostas.</Typography>
         <Typography
           sx={{ cursor: "pointer", textDecoration: "underline", mt: 1 }}
@@ -85,7 +86,7 @@ export default function RespostasPage() {
   if (respostas.length === 0) {
     return (
       <PageContainer>
-        <BackButton to="/atendimento/dashboard" />
+        <BackButton />
         <PageTitle>Questionário de Saúde</PageTitle>
         <Typography color="text.secondary">
           O paciente <strong>{paciente.nome}</strong> ainda não respondeu o questionário.
@@ -109,7 +110,7 @@ export default function RespostasPage() {
 
   return (
     <PageContainer>
-      <BackButton to="/atendimento/dashboard" />
+      <BackButton />
       <PageTitle>Questionário de Saúde</PageTitle>
 
       {/* Cabeçalho com paciente e pontuação */}
@@ -151,7 +152,7 @@ export default function RespostasPage() {
       <Stack spacing={2} mt={2}>
         {respostasOrdenadas.map((r: any, idx) => (
           <Paper
-            key={r.perguntaId}
+            key={`${r.perguntaId}-${idx}`}
             elevation={1}
             sx={{ p: 2.5, borderRadius: 2, borderLeft: `4px solid ${r.peso > 0 ? "#f57c00" : "#2e7d32"}` }}
           >
@@ -159,7 +160,7 @@ export default function RespostasPage() {
               Pergunta {idx + 1}
             </Typography>
             <Typography fontWeight={600} mb={1}>
-              {r.perguntaTexto ?? r.pergunta?.texto ?? "—"}
+              {r.perguntaTexto || r.pergunta?.texto || "Pergunta não encontrada"}
             </Typography>
             <Typography mb={0.5}>
               <strong>Resposta:</strong> {r.resposta}

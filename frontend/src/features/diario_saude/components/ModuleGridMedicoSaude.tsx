@@ -2,6 +2,7 @@ import { Box } from '@mui/material';
 import { ModuleCard } from '../../../components/ModuleCard';
 import HistoryIcon from '@mui/icons-material/History';
 import { useNavigate } from 'react-router-dom';
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 
 export function ModuleGridMedicoSaude() {
     const navigate = useNavigate();
@@ -11,7 +12,13 @@ export function ModuleGridMedicoSaude() {
             icon: <HistoryIcon sx={{ fontSize: 40 }} color="secondary" />,
             title: 'Respostas do Questionário',
             desc: 'Veja as respostas enviadas pelo paciente.',
-            onClick: () => navigate('/respostas_questionario'),
+            onClick: () => navigate('/medico/respostas-questionario'),
+        },
+        {
+            icon: <PersonSearchIcon sx={{ fontSize: 40 }} color="primary" />,
+            title: 'Iniciar Consulta',
+            desc: 'Selecionar paciente e iniciar atendimento.',
+            onClick: () => navigate('/medico'),
         },
     ];
 
@@ -35,4 +42,5 @@ export function ModuleGridMedicoSaude() {
             ))}
         </Box>
     );
+
 }
