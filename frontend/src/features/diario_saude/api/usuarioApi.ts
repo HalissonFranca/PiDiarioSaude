@@ -3,20 +3,25 @@ import type { Usuario } from "./types";
 
 const base = "/api/diario_saude/usuario";
 
+const getAuthHeader = () => ({
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+});
+
 export const usuarioApi = {
   porId: async (id: number): Promise<Usuario> => {
-    const token = localStorage.getItem("token");
-    const { data } = await http.get(`${base}/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const { data } = await http.get(`${base}/${id}`, { headers: getAuthHeader() });
     return data;
   },
 
   atualizar: async (payload: Usuario): Promise<Usuario> => {
-    const token = localStorage.getItem("token");
     const { data } = await http.put(base, payload, {
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      headers: { ...getAuthHeader(), "Content-Type": "application/json" },
     });
+    return data;
+  },
+
+  listarPacientes: async (): Promise<Usuario[]> => {
+    const { data } = await http.get(`${base}/pacientes`, { headers: getAuthHeader() });
     return data;
   },
 };

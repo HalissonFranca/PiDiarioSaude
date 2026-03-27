@@ -6,6 +6,7 @@ import org.springframework.beans.BeanUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.pucgo.ads.projetointegrador.diario_saude.dto.PrescricaoMedicaDTO;
+import br.pucgo.ads.projetointegrador.plataforma.entity.User;
 import jakarta.persistence.*;
 
 @Entity
@@ -26,7 +27,8 @@ public class PrescricaoMedicaEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_medico", nullable = false)
     @JsonIgnore
-    private MedicoEntity medico;
+    private User medico; // Mudança de MedicoEntity para User, pois o médico é um tipo de usuário na
+                         // plataforma
 
     // Relação (M:1) Usuário
     @ManyToOne(fetch = FetchType.LAZY)
@@ -48,32 +50,68 @@ public class PrescricaoMedicaEntity {
     @JsonIgnore
     private Set<ExercicioRecomendadoEntity> exerciciosRecomendados;
 
-    public PrescricaoMedicaEntity(PrescricaoMedicaDTO dto){
+    public PrescricaoMedicaEntity(PrescricaoMedicaDTO dto) {
         BeanUtils.copyProperties(dto, this);
     }
 
-    public PrescricaoMedicaEntity(){}
+    public PrescricaoMedicaEntity() {
+    }
 
-    public long getId_prescricao() { return id_prescricao; }
-    public void setId_prescricao(long id_prescricao) { this.id_prescricao = id_prescricao; }
+    public long getId_prescricao() {
+        return id_prescricao;
+    }
 
-    public String getData_prescricao() { return data_prescricao; }
-    public void setData_prescricao(String data_prescricao) { this.data_prescricao = data_prescricao; }
+    public void setId_prescricao(long id_prescricao) {
+        this.id_prescricao = id_prescricao;
+    }
 
-    public String getObservacoes() { return observacoes; }
-    public void setObservacoes(String observacoes) { this.observacoes = observacoes; }
+    public String getData_prescricao() {
+        return data_prescricao;
+    }
 
-    public MedicoEntity getMedico() { return medico; }
-    public void setMedico(MedicoEntity medico) { this.medico = medico; }
+    public void setData_prescricao(String data_prescricao) {
+        this.data_prescricao = data_prescricao;
+    }
 
-    public UsuarioEntity getUsuario() { return usuario; }
-    public void setUsuario(UsuarioEntity usuario) { this.usuario = usuario; }
+    public String getObservacoes() {
+        return observacoes;
+    }
 
-    public Set<PrescricaoMedicamentoEntity> getPrescricoesMedicamentos() { return prescricoesMedicamentos; }
-    public void setPrescricoesMedicamentos(Set<PrescricaoMedicamentoEntity> prescricoesMedicamentos) { this.prescricoesMedicamentos = prescricoesMedicamentos; }
+    public void setObservacoes(String observacoes) {
+        this.observacoes = observacoes;
+    }
 
-    public Set<PrescricaoExameEntity> getPrescricoesExames() { return prescricoesExames; }
-    public void setPrescricoesExames(Set<PrescricaoExameEntity> prescricoesExames) { this.prescricoesExames = prescricoesExames; }
+    public User getMedico() {
+        return medico;
+    }
+
+    public void setMedico(User medico) {
+        this.medico = medico;
+    }
+
+    public UsuarioEntity getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(UsuarioEntity usuario) {
+        this.usuario = usuario;
+    }
+
+    public Set<PrescricaoMedicamentoEntity> getPrescricoesMedicamentos() {
+        return prescricoesMedicamentos;
+    }
+
+    public void setPrescricoesMedicamentos(Set<PrescricaoMedicamentoEntity> prescricoesMedicamentos) {
+        this.prescricoesMedicamentos = prescricoesMedicamentos;
+    }
+
+    public Set<PrescricaoExameEntity> getPrescricoesExames() {
+        return prescricoesExames;
+    }
+
+    public void setPrescricoesExames(Set<PrescricaoExameEntity> prescricoesExames) {
+        this.prescricoesExames = prescricoesExames;
+    }
 
     public Set<ExercicioRecomendadoEntity> getExerciciosRecomendados() {
         return exerciciosRecomendados;

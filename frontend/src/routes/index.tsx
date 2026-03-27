@@ -27,6 +27,7 @@ import RespostasPage from '@/features/diario_saude/Idoso/RespostasPage';
 import HistoricoConsultasMedicoPage from '@/features/diario_saude/Medico/HistoricoConsultasMedicoPage';
 import AdminUsuarioCreatePage from '@/features/admin/pages/AdminUsuarioCreatePage';
 import GerenciarQuestionarioPage from '@/features/diario_saude/Admin/GerenciarQuestionarioPage';
+import MedicoRespostasQuestionarioPage from '@/features/diario_saude/Medico/MedicoRespostasQuestionarioPage';
 
 
 function Home() {
@@ -81,6 +82,7 @@ export function AppRoutes() {
         <Route path="atendimento/alergias" element={<AlergiasPage />} />
         <Route path="atendimento/doencas" element={<DiagnosticarDoencaPage />} />
         <Route path="/atendimento/historico-medico" element={<HistoricoConsultasMedicoPage />} />
+        <Route path="medico/respostas-questionario" element={<MedicoRespostasQuestionarioPage />} />
 
         {/* Página inicial do médico */}
         <Route path="medico" element={<IniciarConsulta />} />

@@ -34,7 +34,18 @@ export default function AlergiasPage() {
   const queryClient = useQueryClient();
 
   const paciente = location.state?.paciente;
-  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado") || "null");
+
+  // ✅ corrigido: chave certa do localStorage
+  const usuarioLogado = (() => {
+    try {
+      return (
+        JSON.parse(localStorage.getItem("usuario") || "null") ||
+        JSON.parse(localStorage.getItem("user") || "null")
+      );
+    } catch {
+      return null;
+    }
+  })();
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -45,30 +56,32 @@ export default function AlergiasPage() {
     if (!paciente) navigate("/medico");
   }, [paciente, navigate]);
 
-  // LISTAR TODAS AS ALERGIAS
-  const { data: listaAlergiasSistema = [] } = useQuery<Alergia[]>({
+  // LISTAR TODAS AS ALERGIAS DO SISTEMA
+  const { data: listaAlergiasSistema = [] as Alergia[] } = useQuery<Alergia[]>({
     queryKey: ["alergias", "sistema"],
     queryFn: () => alergiaApi.listarSistema(),
   });
 
   // LISTAR ALERGIAS DO PACIENTE
-  const { data: alergiasPaciente = [] } = useQuery<Alergia[]>({
+  // ✅ corrigido: = [] as Alergia[] para o TypeScript inferir o tipo corretamente
+  const { data: alergiasPaciente = [] as Alergia[] } = useQuery<Alergia[]>({
     queryKey: ["usuario", pacienteId, "alergias"],
     queryFn: () => usuarioAlergiaApi.listar(pacienteId!),
     enabled: !!pacienteId,
   });
 
   // MUTAÇÕES
+  // ✅ corrigido: invalidateQueries agora recebe objeto com queryKey
   const addAlergiaMutation = useMutation({
     mutationFn: ({ usuarioId, alergiaId }: { usuarioId: number; alergiaId: number }) =>
       usuarioAlergiaApi.adicionar(usuarioId, alergiaId),
-    onSuccess: () => queryClient.invalidateQueries(["usuario", pacienteId, "alergias"]),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["usuario", pacienteId, "alergias"] }),
   });
 
   const removeAlergiaMutation = useMutation({
     mutationFn: ({ usuarioId, alergiaId }: { usuarioId: number; alergiaId: number }) =>
       usuarioAlergiaApi.remover(usuarioId, alergiaId),
-    onSuccess: () => queryClient.invalidateQueries(["usuario", pacienteId, "alergias"]),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["usuario", pacienteId, "alergias"] }),
   });
 
   const [dialogAlergiaOpen, setDialogAlergiaOpen] = useState(false);
@@ -123,7 +136,6 @@ export default function AlergiasPage() {
         Adicionar Alergia
       </Button>
 
-      {/* DIALOG */}
       <Dialog open={dialogAlergiaOpen} onClose={() => setDialogAlergiaOpen(false)} fullWidth maxWidth="sm">
         <DialogTitle sx={{ fontSize: isMobile ? "1.2rem" : "1.4rem" }}>Adicionar Alergia</DialogTitle>
         <DialogContent>
@@ -139,8 +151,8 @@ export default function AlergiasPage() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDialogAlergiaOpen(false)}>Cancelar</Button>
-          <Button variant="contained" onClick={handleAddAlergia} disabled={addAlergiaMutation.isLoading}>
-            {addAlergiaMutation.isLoading ? "Adicionando..." : "Adicionar"}
+          <Button variant="contained" onClick={handleAddAlergia} disabled={addAlergiaMutation.isPending}>
+            {addAlergiaMutation.isPending ? "Adicionando..." : "Adicionar"}
           </Button>
         </DialogActions>
       </Dialog>

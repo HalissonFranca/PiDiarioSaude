@@ -58,18 +58,25 @@ export default function DashboardMedico() {
     // CARREGAR DADOS DO PACIENTE
     // -----------------------------
     useEffect(() => {
-        usuarioDoencaApi.listar(paciente.id_usuario).then(setDoencas);
-        usuarioAlergiaApi.listar(paciente.id_usuario).then(setAlergias);
+        if (!paciente) return;
+
+        usuarioDoencaApi.listar(paciente.id_usuario).then((lista: any[]) => {
+            setDoencas(lista);
+        });
+
+        usuarioAlergiaApi.listar(paciente.id_usuario).then((lista: any[]) => {
+            setAlergias(lista);
+        });
 
         questionarioApi.obterRespostas(paciente.id_usuario).then((respostas) => {
-            const total = respostas.reduce((acc, r) => acc + r.peso, 0);
+            const total = respostas.reduce((acc: number, r: any) => acc + r.peso, 0);
             setPontuacao(total);
-
             if (total <= 6) setInterpretacao("baixa vulnerabilidade clínico funcional");
             else if (total <= 10) setInterpretacao("moderada vulnerabilidade clínico funcional");
             else setInterpretacao("alta vulnerabilidade clínico funcional");
         });
-    }, [paciente.id_usuario]);
+
+    }, [paciente?.id_usuario]);
 
     // -----------------------------
     // SALVAR ALTERAÇÕES (mantido)
@@ -78,8 +85,14 @@ export default function DashboardMedico() {
         try {
             const payload = {
                 id_usuario: paciente.id_usuario,
-                ...editData,
+                nome: editData.nome,
+                idade: Number(editData.idade),
+                peso: Number(editData.peso),
+                altura: Number(editData.altura),
+                alergias: editData.alergias,
             };
+
+            console.log("📦 Payload atualizado:", payload);
 
             await usuarioApi.atualizar(payload);
 

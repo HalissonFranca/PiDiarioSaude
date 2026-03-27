@@ -47,7 +47,7 @@ export function ModuleGridMedico({ paciente, prescricao }: { paciente: Paciente,
       icon: <LocalHospitalIcon sx={{ fontSize: 40 }} color="warning" />,
       title: 'Alergias',
       desc: 'Visualizar e editar alergias do paciente.',
-      onClick: () => navigate('/atendimento/alergias', { state: { paciente, prescricao } }),
+      onClick: () => navigate('/atendimento/alergias', { state: { paciente } }),
     },
     {
       icon: <DescriptionIcon sx={{ fontSize: 40 }} color="info" />,
@@ -59,7 +59,7 @@ export function ModuleGridMedico({ paciente, prescricao }: { paciente: Paciente,
       icon: <AssignmentIcon sx={{ fontSize: 40 }} color="primary" />,
       title: 'Questionário de Saúde',
       desc: 'Visualizar respostas e pontuação do questionário do paciente.',
-      onClick: () => navigate('/respostas_questionario', { state: { paciente, prescricao } }),
+      onClick: () => navigate('/respostas_questionario', { state: { paciente } }),
     },
   ];
 
