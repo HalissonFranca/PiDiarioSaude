@@ -13,7 +13,7 @@ export const usuarioApi = {
     return data;
   },
 
-  atualizar: async (payload: Usuario): Promise<Usuario> => {
+  atualizar: async (payload: Partial<Usuario> & { userId: number }): Promise<Usuario> => {
     const { data } = await http.put(base, payload, {
       headers: { ...getAuthHeader(), "Content-Type": "application/json" },
     });
@@ -24,4 +24,12 @@ export const usuarioApi = {
     const { data } = await http.get(`${base}/pacientes`, { headers: getAuthHeader() });
     return data;
   },
+  // ✅ busca pelo user_id em vez do id_usuario
+  porUsuarioId: async (userId: number): Promise<Usuario> => {
+    const { data } = await http.get(`${base}/por-user/${userId}`, {
+      headers: getAuthHeader()
+    });
+    return data;
+  },
+
 };

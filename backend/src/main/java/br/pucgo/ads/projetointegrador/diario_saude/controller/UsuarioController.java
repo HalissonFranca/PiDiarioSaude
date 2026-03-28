@@ -6,21 +6,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import br.pucgo.ads.projetointegrador.diario_saude.dto.UsuarioDTO;
 import br.pucgo.ads.projetointegrador.diario_saude.service.UsuarioService;
 import br.pucgo.ads.projetointegrador.plataforma.repository.UserRepository;
-import br.pucgo.ads.projetointegrador.plataforma.repository.UserRepository;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/diario_saude/usuario")
@@ -28,11 +18,12 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
     @Autowired
     private UserRepository userRepository;
 
     @GetMapping
-    public List<UsuarioDTO> ListarTodos() {
+    public List<UsuarioDTO> listarTodos() {
         return usuarioService.listarTodos();
     }
 
@@ -52,7 +43,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
         usuarioService.excluir(id);
         return ResponseEntity.ok().build();
     }
@@ -60,6 +51,13 @@ public class UsuarioController {
     @GetMapping("/idosos")
     public List<UsuarioDTO> listarIdosos() {
         return usuarioService.listarIdosos();
+    }
+
+    // ✅ busca ou cria automaticamente o registro clínico pelo userId
+    @GetMapping("/por-user/{userId}")
+    public ResponseEntity<UsuarioDTO> buscarPorUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(
+                new UsuarioDTO(usuarioService.buscarOuCriarPaciente(userId)));
     }
 
     @GetMapping("/pacientes")

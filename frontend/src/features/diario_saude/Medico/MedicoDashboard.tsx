@@ -50,6 +50,31 @@ export default function DashboardMedico() {
     // Se o paciente ou a prescrição ainda não foram carregados (e o useEffect de cima
     // ainda não executou a navegação), retorne null temporariamente para evitar erros
     // de acesso a propriedades (como paciente.id_usuario) no restante do componente.
+
+    useEffect(() => {
+        if (!paciente) return;
+        const id = paciente.id_usuario ?? paciente.id;
+        usuarioApi.porUsuarioId(id)
+            .then((dados) => {
+                setEditData({
+                    nome: dados.nome ?? paciente.nome ?? "",
+                    idade: String(dados.idade ?? ""),
+                    peso: String(dados.peso ?? ""),
+                    altura: String(dados.altura ?? ""),
+                    alergias: paciente.alergias ?? "",
+                });
+            })
+            .catch(() => {
+                setEditData({
+                    nome: paciente.nome ?? "",
+                    idade: "",
+                    peso: "",
+                    altura: "",
+                    alergias: "",
+                });
+            });
+    }, [paciente?.id_usuario]);
+
     if (!paciente || !prescricao) {
         return null;
     }
@@ -79,23 +104,19 @@ export default function DashboardMedico() {
     }, [paciente?.id_usuario]);
 
     // -----------------------------
-    // SALVAR ALTERAÇÕES (mantido)
+    // SALVAR ALTERAÇÕES DO PACIENTE
     // -----------------------------
     const handleSalvar = async () => {
         try {
             const payload = {
-                id_usuario: paciente.id_usuario,
+                userId: paciente.id_usuario,
                 nome: editData.nome,
                 idade: Number(editData.idade),
                 peso: Number(editData.peso),
                 altura: Number(editData.altura),
-                alergias: editData.alergias,
             };
 
-            console.log("📦 Payload atualizado:", payload);
-
             await usuarioApi.atualizar(payload);
-
             alert("Informações do paciente atualizadas!");
         } catch (err) {
             console.error(err);

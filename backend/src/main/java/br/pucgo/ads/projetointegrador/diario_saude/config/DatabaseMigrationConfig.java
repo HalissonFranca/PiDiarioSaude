@@ -19,8 +19,9 @@ public class DatabaseMigrationConfig {
 
     @PostConstruct
     public void executarMigracoes() {
-        corrigirFkRespostaQuestionario(); // ✅ método abaixo
-        adicionarFkUsuarioInfoClinica(); // ✅ método abaixo
+        corrigirFkRespostaQuestionario();
+        adicionarFkUsuarioInfoClinica();
+        corrigirFkPrescricaoMedico();
     }
 
     // ── Correção original do projeto ─────────────────────────────────────────
@@ -87,4 +88,38 @@ public class DatabaseMigrationConfig {
             log.warn("[UsuarioInfo] Não foi possível adicionar FK: {}", e.getMessage());
         }
     }
+
+    // ── Migração: FK de ds_prescricao_medica/id_medico → users ───────────────
+    private void corrigirFkPrescricaoMedico() {
+        try {
+            Integer count = jdbcTemplate.queryForObject("""
+                    SELECT COUNT(*) FROM information_schema.table_constraints
+                    WHERE table_name = 'ds_prescricao_medica'
+                      AND constraint_name = 'fknyucclqtfqxlm94phastn5ava'
+                    """, Integer.class);
+
+            if (count != null && count > 0) {
+                log.info("[Prescrição] FK antiga de id_medico encontrada — corrigindo para apontar para 'users'...");
+
+                jdbcTemplate.execute("""
+                        ALTER TABLE ds_prescricao_medica
+                            DROP CONSTRAINT fknyucclqtfqxlm94phastn5ava
+                        """);
+
+                jdbcTemplate.execute("""
+                        ALTER TABLE ds_prescricao_medica
+                            ADD CONSTRAINT fk_prescricao_medico_user
+                            FOREIGN KEY (id_medico) REFERENCES users(id)
+                        """);
+
+                log.info("[Prescrição] FK de id_medico corrigida para apontar para 'users'.");
+            } else {
+                log.debug("[Prescrição] FK de id_medico já está correta, nenhuma ação necessária.");
+            }
+
+        } catch (Exception e) {
+            log.warn("[Prescrição] Não foi possível corrigir FK de id_medico: {}", e.getMessage());
+        }
+    }
+
 }
