@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.pucgo.ads.projetointegrador.diario_saude.dto.PrescricaoMedicaDTO;
 import br.pucgo.ads.projetointegrador.diario_saude.entity.PrescricaoMedicaEntity;
+import br.pucgo.ads.projetointegrador.diario_saude.entity.UsuarioEntity;
 import br.pucgo.ads.projetointegrador.diario_saude.repository.UsuarioRepository;
 import br.pucgo.ads.projetointegrador.diario_saude.repository.PrescricaoMedicaRepository;
 import br.pucgo.ads.projetointegrador.plataforma.repository.UserRepository;
@@ -25,19 +26,22 @@ public class PrescricaoMedicaService {
     @Autowired
     private UsuarioRepository usuarioRepo;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
     public List<PrescricaoMedicaDTO> listarTodos() {
         return repo.findAll().stream().map(PrescricaoMedicaDTO::new).toList();
     }
 
     public PrescricaoMedicaDTO inserir(PrescricaoMedicaDTO dto) {
-
         PrescricaoMedicaEntity entity = new PrescricaoMedicaEntity(dto);
 
         entity.setMedico(userRepo.findById(dto.getId_medico())
                 .orElseThrow(() -> new RuntimeException("Médico não encontrado")));
 
-        entity.setUsuario(usuarioRepo.findById(dto.getId_usuario())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado")));
+        // busca ou cria automaticamente o paciente na usuario_info_clinica
+        UsuarioEntity paciente = usuarioService.buscarOuCriarPaciente(dto.getId_usuario());
+        entity.setUsuario(paciente);
 
         entity.setData_prescricao(LocalDate.now().toString());
 

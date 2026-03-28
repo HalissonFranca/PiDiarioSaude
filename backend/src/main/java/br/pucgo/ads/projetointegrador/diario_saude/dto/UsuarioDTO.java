@@ -6,7 +6,7 @@ import br.pucgo.ads.projetointegrador.diario_saude.entity.UsuarioEntity;
 
 public class UsuarioDTO {
 
-    private long id_usuario;
+    private Long id_usuario;
     private String nome;
     private int idade;
     private float peso;

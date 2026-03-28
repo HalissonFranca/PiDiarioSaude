@@ -1,24 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Container,
-  Paper,
-  Typography,
-  Button,
-  TextField,
-  List,
-  ListItemButton,
-  ListItemText,
-  Box,
+  Container, Paper, Typography, Button, TextField,
+  List, ListItemButton, ListItemText, Box,
 } from "@mui/material";
-
 import { useQuery, useMutation } from "@tanstack/react-query";
 import type { Prescricao, CriarPrescricaoDTO } from "../api/types";
 import http from "@/lib/http";
 
-// --------------------------
-// Componentes reutilizáveis
-// --------------------------
 function PageContainer({ children }: { children: React.ReactNode }) {
   return <Container maxWidth="sm" sx={{ py: 5 }}>{children}</Container>;
 }
@@ -27,10 +16,6 @@ function PageTitle({ children }: { children: React.ReactNode }) {
   return <Typography variant="h4" mb={3} textAlign="center">{children}</Typography>;
 }
 
-// --------------------------
-// API de pacientes
-// --------------------------
-// ✅ busca só idosos da tabela users
 const usuarioApi = {
   listar: async (): Promise<any[]> => {
     const token = localStorage.getItem("token");
@@ -41,29 +26,22 @@ const usuarioApi = {
   },
 };
 
-// --------------------------
-// Página
-// --------------------------
 export default function IniciarConsulta() {
   const navigate = useNavigate();
+
   const usuario = (() => {
     try {
       return (
         JSON.parse(localStorage.getItem("usuario") || "null") ||
         JSON.parse(localStorage.getItem("user") || "null")
       );
-    } catch {
-      return null;
-    }
+    } catch { return null; }
   })();
-  const token = localStorage.getItem("token");
 
+  const token = localStorage.getItem("token");
   const [search, setSearch] = useState("");
   const [selectedPaciente, setSelectedPaciente] = useState<any>(null);
 
-  // --------------------------
-  // Buscar pacientes via React Query
-  // --------------------------
   const { data: pacientes = [], error } = useQuery({
     queryKey: ["pacientes"],
     queryFn: usuarioApi.listar,
@@ -74,80 +52,36 @@ export default function IniciarConsulta() {
     p.nome.toLowerCase().includes(search.toLowerCase())
   );
 
-  // --------------------------
-  // Criar prescricao
-  // --------------------------
-
-  const startConsultaMutation = useMutation({
+  const criarPrescricao = useMutation({
     mutationFn: async (pacienteSelecionado: any) => {
-      if (!usuario) throw new Error("Usuário não logado");
-
-      if (!pacienteSelecionado) {
-        throw new Error("Nenhum paciente selecionado");
-      }
-
-      if (!pacienteSelecionado.id_usuario) {
-        console.error("Paciente inválido:", pacienteSelecionado);
-        throw new Error("Paciente sem id_usuario");
-      }
-
-      if (!usuario.id_usuario) {
-        console.error("Usuário inválido:", usuario);
-        throw new Error("Médico sem id_usuario");
-      }
-
       const payload: CriarPrescricaoDTO = {
-        id_medico: usuario.id_usuario,
+        id_medico: usuario.userId ?? usuario.id_usuario,
         id_usuario: pacienteSelecionado.id_usuario,
         descricao: "Consulta iniciada",
       };
-
-      console.log("👤 Usuário logado:", usuario);
-      console.log("🧓 Paciente selecionado:", pacienteSelecionado);
-      console.log("📦 Payload FINAL:", payload);
-
       const { data } = await http.post("/api/diario_saude/prescricao", payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       return data as Prescricao;
     },
-
     onSuccess: (prescricao, pacienteSelecionado) => {
       navigate("/atendimento/dashboard", {
         state: { paciente: pacienteSelecionado, prescricao },
       });
     },
-
     onError: (err: any) => {
-      console.error("❌ Erro ao iniciar consulta:", err);
-
-      // 🔥 MOSTRA O ERRO REAL DO BACKEND
-      if (err?.response?.data) {
-        console.error("📛 Backend respondeu:", err.response.data);
-        alert(err.response.data.message || "Erro no servidor");
-      } else {
-        alert("Erro ao iniciar a consulta.");
-      }
+      console.error("❌ Erro ao criar prescrição:", err);
+      alert(err?.response?.data?.message || "Erro ao iniciar a consulta.");
     },
   });
 
-  const handleStartConsulta = () => {
-    if (selectedPaciente) startConsultaMutation.mutate(selectedPaciente);
-  };
-
-  // --------------------------
-  // Render
-  // --------------------------
   return (
     <PageContainer>
       <Paper elevation={3} sx={{ p: 4, borderRadius: 3, textAlign: "center" }}>
         <PageTitle>Iniciar Consulta</PageTitle>
 
         {error && (
-          <Typography color="error" mb={2}>
-            Erro ao carregar pacientes
-          </Typography>
+          <Typography color="error" mb={2}>Erro ao carregar pacientes</Typography>
         )}
 
         <TextField
@@ -179,10 +113,10 @@ export default function IniciarConsulta() {
           <Button
             variant="contained"
             size="large"
-            disabled={!selectedPaciente || startConsultaMutation.isPending}
-            onClick={handleStartConsulta}
+            disabled={!selectedPaciente || criarPrescricao.isPending}
+            onClick={() => criarPrescricao.mutate(selectedPaciente)}
           >
-            {startConsultaMutation.isPending ? "Iniciando..." : "Iniciar Consulta"}
+            {criarPrescricao.isPending ? "Iniciando..." : "Iniciar Consulta"}
           </Button>
         </Box>
       </Paper>
