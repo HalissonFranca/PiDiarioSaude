@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Configuration
-public class AlergiasDataInitializer{
+public class AlergiasDataInitializer {
 
     @Bean
     CommandLineRunner initAlergias(AlergiaRepository alergiaRepository) {
@@ -26,9 +26,9 @@ public class AlergiasDataInitializer{
 
             // Lê o arquivo da pasta resources
             List<Map<String, Object>> listaAlergias = mapper.readValue(
-                getClass().getResourceAsStream("/alergias.json"),
-                new TypeReference<>() {}
-            );
+                    getClass().getResourceAsStream("/data/alergias.json"),
+                    new TypeReference<>() {
+                    });
 
             for (Map<String, Object> dto : listaAlergias) {
                 AlergiaEntity alergia = new AlergiaEntity();

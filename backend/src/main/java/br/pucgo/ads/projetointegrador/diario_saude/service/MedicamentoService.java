@@ -17,50 +17,62 @@ public class MedicamentoService {
     @Autowired
     private MedicamentoRepository medicamentoRepository;
 
-    public List<MedicamentoDTO> listarTodos(){
+    public List<MedicamentoDTO> listarTodos() {
         return medicamentoRepository.findAll().stream().map(MedicamentoDTO::new).toList();
     }
 
-    public void inserir(MedicamentoDTO medicamento){
+    public void inserir(MedicamentoDTO medicamento) {
         medicamentoRepository.save(new MedicamentoEntity(medicamento));
     }
 
-    public MedicamentoDTO alterar(MedicamentoDTO medicamento){
+    public MedicamentoDTO alterar(MedicamentoDTO medicamento) {
         return new MedicamentoDTO(medicamentoRepository.save(new MedicamentoEntity(medicamento)));
     }
 
-    public void excluir(Long id){
+    public void excluir(Long id) {
         medicamentoRepository.delete(medicamentoRepository.findById(id).get());
     }
 
-    public MedicamentoDTO buscarPorId(Long id){
+    public MedicamentoDTO buscarPorId(Long id) {
         return new MedicamentoDTO(medicamentoRepository.findById(id).get());
     }
 
     public void importarCSV(MultipartFile file) {
-        // CORREÇÃO: Alterado de "Windows-1252" para "ISO-8859-1"
         try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(file.getInputStream(), "ISO-8859-1"))) { 
+                new InputStreamReader(file.getInputStream(), "UTF-8"))) {
 
             br.readLine(); // pula cabeçalho
 
             String linha;
+            List<MedicamentoEntity> lote = new java.util.ArrayList<>();
+
             while ((linha = br.readLine()) != null) {
                 String[] col = linha.split(";");
-                if (col.length < 11) continue;
+                if (col.length < 5)
+                    continue; // ✅ novo CSV tem 5 colunas
 
-                // ... restante do código de processamento
-                String nome = col[1];
-                String principio_ativo = col[10];
-                String empresa = col[8];
-                String classe = col[7];
-                String numero_registro = col[4];
+                String nome = col[0].trim();
+                String principioAtivo = col[1].trim();
+                String empresa = col[2].trim();
+                String classe = col[3].trim();
+                String numeroRegistro = col[4].trim();
+
+                if (nome.isEmpty())
+                    continue;
 
                 if (!medicamentoRepository.existsByNome(nome)) {
-                    medicamentoRepository.save(
-                        new MedicamentoEntity(nome, principio_ativo, empresa, classe, numero_registro)
-                    );
+                    lote.add(new MedicamentoEntity(nome, principioAtivo, empresa, classe, numeroRegistro));
                 }
+
+                // ✅ salva em lotes de 500
+                if (lote.size() >= 500) {
+                    medicamentoRepository.saveAll(lote);
+                    lote.clear();
+                }
+            }
+
+            if (!lote.isEmpty()) {
+                medicamentoRepository.saveAll(lote);
             }
 
         } catch (Exception e) {

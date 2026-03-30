@@ -22,6 +22,7 @@ public class DatabaseMigrationConfig {
         corrigirFkRespostaQuestionario();
         adicionarFkUsuarioInfoClinica();
         corrigirFkPrescricaoMedico();
+        importarMedicamentosSeVazio();
     }
 
     // ── Correção original do projeto ─────────────────────────────────────────
@@ -120,6 +121,70 @@ public class DatabaseMigrationConfig {
         } catch (Exception e) {
             log.warn("[Prescrição] Não foi possível corrigir FK de id_medico: {}", e.getMessage());
         }
+    }
+
+    private void importarMedicamentosSeVazio() {
+        try {
+            Integer count = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM ds_medicamento", Integer.class);
+
+            if (count != null && count > 0) {
+                log.debug("[Medicamentos] Tabela já populada ({} registros), pulando importação.", count);
+                return;
+            }
+
+            log.info("[Medicamentos] Tabela vazia — iniciando importação do CSV...");
+
+            org.springframework.core.io.ClassPathResource resource = new org.springframework.core.io.ClassPathResource(
+                    "data/dados_abertos_medicamentos.csv");
+
+            try (java.io.BufferedReader br = new java.io.BufferedReader(
+                    new java.io.InputStreamReader(resource.getInputStream(), "ISO-8859-1"))) {
+
+                br.readLine(); // pula cabeçalho
+
+                String linha;
+                java.util.List<Object[]> lote = new java.util.ArrayList<>();
+
+                while ((linha = br.readLine()) != null) {
+                    String[] col = linha.split(";");
+                    if (col.length < 11)
+                        continue;
+
+                    String nome = col[1].replace("\"", "").trim();
+                    String principioAtivo = col[10].replace("\"", "").trim();
+                    String empresa = col[8].replace("\"", "").trim();
+                    String classe = col[7].replace("\"", "").trim();
+                    String numeroRegistro = col[4].replace("\"", "").trim();
+
+                    if (nome.isEmpty())
+                        continue;
+
+                    lote.add(new Object[] { nome, principioAtivo, empresa, classe, numeroRegistro });
+
+                    if (lote.size() >= 500) {
+                        salvarLote(lote);
+                        lote.clear();
+                    }
+                }
+
+                if (!lote.isEmpty()) {
+                    salvarLote(lote);
+                }
+
+                log.info("[Medicamentos] Importação concluída!");
+            }
+
+        } catch (Exception e) {
+            log.warn("[Medicamentos] Erro ao importar CSV: {}", e.getMessage());
+        }
+    }
+
+    private void salvarLote(java.util.List<Object[]> lote) {
+        jdbcTemplate.batchUpdate(
+                "INSERT INTO ds_medicamento (nome, principio_ativo, empresa, classe_terapeutica, numero_registro) " +
+                        "VALUES (?, ?, ?, ?, ?) ON CONFLICT DO NOTHING",
+                lote);
     }
 
 }

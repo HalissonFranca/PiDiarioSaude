@@ -10,19 +10,21 @@ import {
   DialogActions,
   Autocomplete,
   TextField,
-  useMediaQuery,
+  Container,
+  Paper,
+  Chip,
+  Divider,
+  IconButton,
 } from "@mui/material";
+
 import AddIcon from "@mui/icons-material/Add";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+
 import { useNavigate, useLocation } from "react-router-dom";
-import { useTheme } from "@mui/material/styles";
-
-import PageContainer from "../components/PageContainer";
-import PageTitle from "../components/PageTitle";
-import SectionTitle from "../components/SectionTitle";
-import ListItemCard from "../components/ListItemCard";
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { alergiaApi } from "../api/alergiaApi";
 import { usuarioAlergiaApi } from "../api/usuarioAlergiaApi";
 
@@ -35,7 +37,6 @@ export default function AlergiasPage() {
 
   const paciente = location.state?.paciente;
 
-  // ✅ corrigido: chave certa do localStorage
   const usuarioLogado = (() => {
     try {
       return (
@@ -47,120 +48,224 @@ export default function AlergiasPage() {
     }
   })();
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
   const pacienteId = paciente?.id_usuario;
 
   useEffect(() => {
     if (!paciente) navigate("/medico");
   }, [paciente, navigate]);
 
-  // LISTAR TODAS AS ALERGIAS DO SISTEMA
-  const { data: listaAlergiasSistema = [] as Alergia[] } = useQuery<Alergia[]>({
+  // 🔎 Lista do sistema
+  const { data: listaAlergiasSistema = [] as Alergia[] } = useQuery({
     queryKey: ["alergias", "sistema"],
     queryFn: () => alergiaApi.listarSistema(),
   });
 
-  // LISTAR ALERGIAS DO PACIENTE
-  // ✅ corrigido: = [] as Alergia[] para o TypeScript inferir o tipo corretamente
-  const { data: alergiasPaciente = [] as Alergia[] } = useQuery<Alergia[]>({
+  // 👤 Lista do paciente
+  const { data: alergiasPaciente = [] as Alergia[] } = useQuery({
     queryKey: ["usuario", pacienteId, "alergias"],
     queryFn: () => usuarioAlergiaApi.listar(pacienteId!),
     enabled: !!pacienteId,
   });
 
-  // MUTAÇÕES
-  // ✅ corrigido: invalidateQueries agora recebe objeto com queryKey
+  // ➕ Adicionar
   const addAlergiaMutation = useMutation({
     mutationFn: ({ usuarioId, alergiaId }: { usuarioId: number; alergiaId: number }) =>
       usuarioAlergiaApi.adicionar(usuarioId, alergiaId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["usuario", pacienteId, "alergias"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["usuario", pacienteId, "alergias"] });
+      setDialogOpen(false);
+      setAlergiaSelecionada(null);
+    },
   });
 
+  // ❌ Remover
   const removeAlergiaMutation = useMutation({
     mutationFn: ({ usuarioId, alergiaId }: { usuarioId: number; alergiaId: number }) =>
       usuarioAlergiaApi.remover(usuarioId, alergiaId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["usuario", pacienteId, "alergias"] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["usuario", pacienteId, "alergias"] }),
   });
 
-  const [dialogAlergiaOpen, setDialogAlergiaOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [alergiaSelecionada, setAlergiaSelecionada] = useState<Alergia | null>(null);
 
-  const handleAddAlergia = () => {
-    if (!alergiaSelecionada || !pacienteId) return alert("Selecione uma alergia.");
-    addAlergiaMutation.mutate({ usuarioId: pacienteId, alergiaId: alergiaSelecionada.id });
-    setDialogAlergiaOpen(false);
-    setAlergiaSelecionada(null);
-  };
-
-  const handleRemoveAlergia = (id: number) => {
-    if (!pacienteId) return;
-    removeAlergiaMutation.mutate({ usuarioId: pacienteId, alergiaId: id });
-  };
+  const dataHoje = new Date().toLocaleDateString("pt-BR");
 
   return (
-    <PageContainer>
-      <Button
-        onClick={() => navigate(-1)}
-        startIcon={<ArrowBackIcon />}
-        fullWidth={isMobile}
-        sx={{ mb: 2, textTransform: "none" }}
-      >
-        Voltar
-      </Button>
+    <Container maxWidth="md" sx={{ py: 4 }}>
 
-      <PageTitle>Alergias do Paciente</PageTitle>
-      <Typography variant={isMobile ? "body1" : "h6"} sx={{ mb: 2 }}>
-        Paciente: <strong>{paciente?.nome}</strong>
-      </Typography>
+      {/* 🔵 Cabeçalho */}
+      <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 3, borderTop: "4px solid #FF7F00" }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box display="flex" alignItems="center" gap={1.5}>
+            <LocalHospitalIcon sx={{ fontSize: 36, color: "#FF7F00" }} />
+            <Box>
+              <Typography variant="h5" fontWeight={700} color="#FF7F00">
+                ALERGIAS DO PACIENTE
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Plataforma UNATI — Diário da Saúde
+              </Typography>
+            </Box>
+          </Box>
 
-      <SectionTitle>Alergias cadastradas</SectionTitle>
+          <Button onClick={() => navigate(-1)}>Voltar</Button>
+        </Box>
+      </Paper>
 
-      {alergiasPaciente.length === 0 ? (
-        <Typography color="text.secondary" sx={{ mt: 1, textAlign: "center" }}>
-          Nenhuma alergia cadastrada para este paciente.
-        </Typography>
-      ) : (
-        alergiasPaciente.map((a) => (
-          <ListItemCard key={a.id} title={a.nome} onDelete={() => handleRemoveAlergia(a.id)} />
-        ))
-      )}
+      <Paper elevation={2} sx={{ p: 4, borderRadius: 3 }}>
 
-      <Button
-        startIcon={<AddIcon />}
-        fullWidth
-        sx={{ mt: 2 }}
-        onClick={() => setDialogAlergiaOpen(true)}
-      >
-        Adicionar Alergia
-      </Button>
+        {/* 👤 Dados */}
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 2,
+            mb: 3,
+            p: 2,
+            bgcolor: "#f0fff4",
+            borderRadius: 2,
+          }}
+        >
+          <Box>
+            <Typography variant="caption">Paciente</Typography>
+            <Typography fontWeight={700}>{paciente?.nome ?? "—"}</Typography>
+          </Box>
 
-      <Dialog open={dialogAlergiaOpen} onClose={() => setDialogAlergiaOpen(false)} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ fontSize: isMobile ? "1.2rem" : "1.4rem" }}>Adicionar Alergia</DialogTitle>
+          <Box textAlign="right">
+            <Typography variant="caption">Responsável</Typography>
+            <Typography fontWeight={700}>
+              {usuarioLogado?.nome ?? "Usuário"}
+            </Typography>
+            <Typography variant="body2">{dataHoje}</Typography>
+          </Box>
+        </Box>
+
+        <Divider sx={{ mb: 3 }} />
+
+        {/* 📋 Título */}
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+          <Box display="flex" alignItems="center" gap={1}>
+            <WarningAmberIcon color="warning" />
+            <Typography variant="h6" fontWeight={600}>
+              Alergias Cadastradas
+            </Typography>
+          </Box>
+
+          <Chip
+            label={`${alergiasPaciente.length} item(s)`}
+            size="small"
+            color="warning"
+            variant="outlined"
+          />
+        </Box>
+
+        {/* 📋 Lista */}
+        {alergiasPaciente.length === 0 ? (
+          <Box
+            sx={{
+              p: 4,
+              textAlign: "center",
+              bgcolor: "#fafafa",
+              borderRadius: 2,
+              border: "1px dashed #ccc",
+              mb: 3,
+            }}
+          >
+            <WarningAmberIcon sx={{ fontSize: 40, color: "#ccc", mb: 1 }} />
+            <Typography color="text.secondary">
+              Nenhuma alergia cadastrada para este paciente.
+            </Typography>
+          </Box>
+        ) : (
+          <Stack spacing={1.5} mb={3}>
+            {alergiasPaciente.map((a) => (
+              <Paper
+                key={a.id}
+                elevation={0}
+                sx={{
+                  p: 2,
+                  borderRadius: 2,
+                  border: "1px solid #e0e0e0",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Box display="flex" alignItems="center" gap={1}>
+                  <WarningAmberIcon fontSize="small" color="warning" />
+                  <Typography fontWeight={600}>{a.nome}</Typography>
+                </Box>
+
+                <IconButton
+                  size="small"
+                  color="error"
+                  onClick={() =>
+                    removeAlergiaMutation.mutate({
+                      usuarioId: pacienteId,
+                      alergiaId: a.id,
+                    })
+                  }
+                >
+                  <DeleteOutlineIcon />
+                </IconButton>
+              </Paper>
+            ))}
+          </Stack>
+        )}
+
+        {/* ➕ Botão */}
+        <Button
+          startIcon={<AddIcon />}
+          variant="outlined"
+          fullWidth
+          color="success"
+          sx={{ borderRadius: 2, py: 1.2 }}
+          onClick={() => setDialogOpen(true)}
+        >
+          Adicionar Alergia
+        </Button>
+      </Paper>
+
+      {/* 📦 Dialog */}
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth maxWidth="sm">
+        <DialogTitle>Adicionar Alergia</DialogTitle>
+
         <DialogContent>
-          <Stack spacing={2} mt={1}>
+          <Stack spacing={2} mt={2}>
             <Autocomplete
               options={listaAlergiasSistema}
               getOptionLabel={(option) => option.nome}
               isOptionEqualToValue={(option, value) => option.id === value?.id}
-              onChange={(e, v) => setAlergiaSelecionada(v)}
-              renderInput={(params) => <TextField {...params} label="Selecione a alergia" fullWidth />}
+              onChange={(_, v) => setAlergiaSelecionada(v)}
+              renderInput={(params) => (
+                <TextField {...params} label="Selecione a alergia" fullWidth />
+              )}
             />
           </Stack>
         </DialogContent>
+
         <DialogActions>
-          <Button onClick={() => setDialogAlergiaOpen(false)}>Cancelar</Button>
-          <Button variant="contained" onClick={handleAddAlergia} disabled={addAlergiaMutation.isPending}>
+          <Button onClick={() => setDialogOpen(false)}>Cancelar</Button>
+
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => {
+              if (!alergiaSelecionada || !pacienteId)
+                return alert("Selecione uma alergia.");
+
+              addAlergiaMutation.mutate({
+                usuarioId: pacienteId,
+                alergiaId: alergiaSelecionada.id,
+              });
+            }}
+            disabled={addAlergiaMutation.isPending}
+          >
             {addAlergiaMutation.isPending ? "Adicionando..." : "Adicionar"}
           </Button>
         </DialogActions>
       </Dialog>
-
-      <Box textAlign="center" mt={6}>
-        <Typography variant={isMobile ? "body1" : "h6"}>{usuarioLogado?.nome}</Typography>
-        <Typography variant="body2">{new Date().toLocaleDateString("pt-BR")}</Typography>
-      </Box>
-    </PageContainer>
+    </Container>
   );
 }
