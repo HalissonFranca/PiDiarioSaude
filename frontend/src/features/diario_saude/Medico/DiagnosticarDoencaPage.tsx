@@ -1,27 +1,14 @@
 import { useState, useEffect } from "react";
 import {
-  Box,
-  Button,
-  Typography,
-  Stack,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Autocomplete,
-  TextField,
-  useMediaQuery,
+  Box, Button, Typography, Stack, Dialog, DialogTitle,
+  DialogContent, DialogActions, Autocomplete, TextField,
+  Container, Paper, Chip, Divider, IconButton,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
+import CoronavirusIcon from "@mui/icons-material/Coronavirus";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useTheme } from "@mui/material/styles";
-
-import PageContainer from "../components/PageContainer";
-import PageTitle from "../components/PageTitle";
-import SectionTitle from "../components/SectionTitle";
-import ListItemCard from "../components/ListItemCard";
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { doencaApi } from "../api/doencaApi";
 import { usuarioDoencaApi } from "../api/usuarioDoencaApi";
@@ -32,136 +19,194 @@ export default function DiagnosticarDoencaPage() {
   const queryClient = useQueryClient();
 
   const paciente = location.state?.paciente;
-  const usuario = JSON.parse(localStorage.getItem("usuarioLogado") || "null");
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [doencaSelecionada, setDoencaSelecionada] = useState<any>(null);
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const medicoLogado = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("usuario") || "null") ||
+        JSON.parse(localStorage.getItem("user") || "null");
+    } catch { return null; }
+  })();
 
   useEffect(() => {
     if (!paciente) navigate("/medico");
   }, [paciente, navigate]);
 
-  // LISTA DOENÇAS DO SISTEMA
   const { data: listaDoencasSistema = [] } = useQuery({
     queryKey: ["doencas", "sistema"],
     queryFn: () => doencaApi.listar(),
   });
 
-  // LISTA DOENÇAS DO PACIENTE
-  const { data: doencasPaciente = [] } = useQuery({
+  const { data: doencasPaciente = [] as any[] } = useQuery({
     queryKey: ["usuario", paciente?.id_usuario, "doencas"],
     queryFn: () => usuarioDoencaApi.listar(paciente.id_usuario),
     enabled: !!paciente?.id_usuario,
   });
 
-  // ADICIONAR DOENÇA
   const addDoencaMutation = useMutation({
     mutationFn: ({ usuarioId, doencaId }: { usuarioId: number; doencaId: number }) =>
       usuarioDoencaApi.adicionar(usuarioId, doencaId),
     onSuccess: () => {
-      queryClient.invalidateQueries(["usuario", paciente?.id_usuario, "doencas"]);
+      queryClient.invalidateQueries({ queryKey: ["usuario", paciente?.id_usuario, "doencas"] });
       setDialogOpen(false);
       setDoencaSelecionada(null);
     },
   });
 
-  const handleAddDoenca = () => {
-    if (!doencaSelecionada || !paciente) return alert("Selecione uma doença.");
-    addDoencaMutation.mutate({ usuarioId: paciente.id_usuario, doencaId: doencaSelecionada.id });
-  };
-
-  // REMOVER DOENÇA
   const removeDoencaMutation = useMutation({
     mutationFn: ({ usuarioId, doencaId }: { usuarioId: number; doencaId: number }) =>
       usuarioDoencaApi.remover(usuarioId, doencaId),
-    onSuccess: () => queryClient.invalidateQueries(["usuario", paciente?.id_usuario, "doencas"]),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["usuario", paciente?.id_usuario, "doencas"] }),
   });
 
-  const handleRemoveDoenca = (id: number) => {
-    if (!paciente) return;
-    removeDoencaMutation.mutate({ usuarioId: paciente.id_usuario, doencaId: id });
-  };
+  const dataHoje = new Date().toLocaleDateString("pt-BR");
 
   return (
-    <PageContainer>
-      <Button
-        onClick={() => navigate(-1)}
-        startIcon={<ArrowBackIcon />}
-        fullWidth={isMobile}
-        sx={{ mb: 2, textTransform: "none" }}
-      >
-        Voltar
-      </Button>
+    <Container maxWidth="md" sx={{ py: 4 }}>
 
-      <PageTitle>Doenças do Paciente</PageTitle>
+      {/* Cabeçalho */}
+      <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 3, borderTop: "4px solid #1565c0" }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box display="flex" alignItems="center" gap={1.5}>
+            <LocalHospitalIcon sx={{ fontSize: 36, color: "#1565c0" }} />
+            <Box>
+              <Typography variant="h5" fontWeight={700} color="#1565c0">
+                DIAGNÓSTICO DE DOENÇAS
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Plataforma UNATI — Diário da Saúde
+              </Typography>
+            </Box>
+          </Box>
+          <Button onClick={() => navigate(-1)} sx={{ textTransform: "none" }}>
+            Voltar
+          </Button>
+        </Box>
+      </Paper>
 
-      <Typography variant={isMobile ? "body1" : "h6"} sx={{ mb: 2 }}>
-        Paciente: <strong>{paciente?.nome}</strong>
-      </Typography>
+      <Paper elevation={2} sx={{ p: 4, borderRadius: 3 }}>
 
-      <SectionTitle>Doenças cadastradas</SectionTitle>
+        {/* Dados paciente e médico */}
+        <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, mb: 3, p: 2, bgcolor: "#f0f4ff", borderRadius: 2 }}>
+          <Box>
+            <Typography variant="caption" color="text.secondary">Paciente</Typography>
+            <Typography fontWeight={700} fontSize="1rem">{paciente?.nome ?? "—"}</Typography>
+            {paciente?.idade && (
+              <Typography variant="body2" color="text.secondary">{paciente.idade} anos</Typography>
+            )}
+          </Box>
+          <Box textAlign="right">
+            <Typography variant="caption" color="text.secondary">Médico Responsável</Typography>
+            <Typography fontWeight={700} fontSize="1rem">
+              {medicoLogado?.name ?? medicoLogado?.nome ?? "Médico"}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">{dataHoje}</Typography>
+          </Box>
+        </Box>
 
-      {doencasPaciente.length === 0 ? (
-        <Typography color="text.secondary" sx={{ mt: 1, textAlign: "center" }}>
-          Nenhuma doença cadastrada para este paciente.
-        </Typography>
-      ) : (
-        doencasPaciente.map((d) => (
-          <ListItemCard
-            key={d.id || d.doenca?.id}
-            title={d.nome || d.doenca?.nome}
-            onDelete={() => handleRemoveDoenca(d.id || d.doenca?.id)}
-          />
-        ))
-      )}
+        <Divider sx={{ mb: 3 }} />
 
-      <Button
-        startIcon={<AddIcon />}
-        fullWidth
-        sx={{ mt: 2 }}
-        onClick={() => setDialogOpen(true)}
-      >
-        Adicionar Doença
-      </Button>
+        {/* Lista de doenças */}
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+          <Box display="flex" alignItems="center" gap={1}>
+            <CoronavirusIcon color="error" />
+            <Typography variant="h6" fontWeight={600}>Doenças Diagnosticadas</Typography>
+          </Box>
+          <Chip label={`${doencasPaciente.length} item(s)`} size="small" color="error" variant="outlined" />
+        </Box>
 
-      <Box textAlign="center" mt={6}>
-        <Typography variant={isMobile ? "body1" : "h6"}>{usuario?.nome}</Typography>
-        <Typography variant="body2">{new Date().toLocaleDateString("pt-BR")}</Typography>
-      </Box>
+        {doencasPaciente.length === 0 ? (
+          <Box sx={{ p: 4, textAlign: "center", bgcolor: "#fafafa", borderRadius: 2, border: "1px dashed #ccc", mb: 3 }}>
+            <CoronavirusIcon sx={{ fontSize: 40, color: "#ccc", mb: 1 }} />
+            <Typography color="text.secondary">Nenhuma doença cadastrada para este paciente.</Typography>
+          </Box>
+        ) : (
+          <Stack spacing={1.5} mb={3}>
+            {doencasPaciente.map((d: any) => (
+              <Paper
+                key={d.id ?? d.doenca?.id}
+                elevation={0}
+                sx={{ p: 2, borderRadius: 2, border: "1px solid #e0e0e0", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+              >
+                <Box display="flex" alignItems="center" gap={1}>
+                  <CoronavirusIcon fontSize="small" color="error" />
+                  <Box>
+                    <Typography fontWeight={600}>{d.nome ?? d.doenca?.nome}</Typography>
+                    {(d.categoria ?? d.doenca?.categoria) && (
+                      <Typography variant="body2" color="text.secondary">
+                        {d.categoria ?? d.doenca?.categoria}
+                      </Typography>
+                    )}
+                  </Box>
+                </Box>
+                <IconButton
+                  size="small"
+                  color="error"
+                  onClick={() => removeDoencaMutation.mutate({
+                    usuarioId: paciente.id_usuario,
+                    doencaId: d.id ?? d.doenca?.id
+                  })}
+                >
+                  <DeleteOutlineIcon />
+                </IconButton>
+              </Paper>
+            ))}
+          </Stack>
+        )}
 
-      {/* DIALOG */}
+        <Button
+          startIcon={<AddIcon />}
+          variant="outlined"
+          fullWidth
+          color="error"
+          sx={{ borderRadius: 2, py: 1.2 }}
+          onClick={() => setDialogOpen(true)}
+        >
+          Adicionar Doença
+        </Button>
+      </Paper>
+
+      {/* Dialog */}
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ fontSize: isMobile ? "1.2rem" : "1.4rem" }}>Adicionar Doença</DialogTitle>
+        <DialogTitle sx={{ borderBottom: "1px solid #eee", pb: 2 }}>
+          <Box display="flex" alignItems="center" gap={1}>
+            <CoronavirusIcon color="error" />
+            Adicionar Doença
+          </Box>
+        </DialogTitle>
         <DialogContent>
-          <Stack spacing={2} mt={1}>
+          <Stack spacing={2} mt={2}>
             <Autocomplete
               options={listaDoencasSistema}
               getOptionLabel={(option) => option.nome}
               isOptionEqualToValue={(option, value) => option.id === value.id}
-              onChange={(e, v) => setDoencaSelecionada(v)}
-              
+              onChange={(_, v) => setDoencaSelecionada(v)}
               renderOption={(props, option) => (
-                <li {...props} key={option.id}>
-                  {option.nome}
-                </li>
+                <li {...props} key={option.id}>{option.nome}</li>
               )}
-
               renderInput={(params) => (
                 <TextField {...params} label="Pesquise a doença" fullWidth />
               )}
             />
           </Stack>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ p: 2, borderTop: "1px solid #eee" }}>
           <Button onClick={() => setDialogOpen(false)}>Cancelar</Button>
-          <Button variant="contained" onClick={handleAddDoenca} disabled={addDoencaMutation.isLoading}>
-            {addDoencaMutation.isLoading ? "Adicionando..." : "Adicionar"}
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+              if (!doencaSelecionada || !paciente) return alert("Selecione uma doença.");
+              addDoencaMutation.mutate({ usuarioId: paciente.id_usuario, doencaId: doencaSelecionada.id });
+            }}
+            disabled={addDoencaMutation.isPending}
+          >
+            {addDoencaMutation.isPending ? "Adicionando..." : "Adicionar"}
           </Button>
         </DialogActions>
       </Dialog>
-    </PageContainer>
+    </Container>
   );
 }
