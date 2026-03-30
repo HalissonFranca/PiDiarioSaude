@@ -76,12 +76,12 @@ export default function RecomendacaoExerciciosPage() {
         <Container maxWidth="md" sx={{ py: 4 }}>
 
             {/* Cabeçalho */}
-            <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 3, borderTop: "4px solid #1565c0" }}>
+            <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 3, borderTop: "4px solid #008000" }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Box display="flex" alignItems="center" gap={1.5}>
-                        <LocalHospitalIcon sx={{ fontSize: 36, color: "#1565c0" }} />
+                        <LocalHospitalIcon sx={{ fontSize: 36, color: "#008000" }} />
                         <Box>
-                            <Typography variant="h5" fontWeight={700} color="#1565c0">
+                            <Typography variant="h5" fontWeight={700} color="#008000">
                                 RECOMENDAÇÃO DE EXERCÍCIOS
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
@@ -120,7 +120,7 @@ export default function RecomendacaoExerciciosPage() {
                 {/* Lista de recomendações */}
                 <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                     <Box display="flex" alignItems="center" gap={1}>
-                        <FitnessCenterIcon color="primary" />
+                        <FitnessCenterIcon sx={{ color: "#008000" }} />
                         <Typography variant="h6" fontWeight={600}>Exercícios Recomendados</Typography>
                     </Box>
                     <Chip label={`${recomendacoes.length} item(s)`} size="small" color="primary" variant="outlined" />
@@ -179,7 +179,7 @@ export default function RecomendacaoExerciciosPage() {
             <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth maxWidth="sm">
                 <DialogTitle sx={{ borderBottom: "1px solid #eee", pb: 2 }}>
                     <Box display="flex" alignItems="center" gap={1}>
-                        <FitnessCenterIcon color="primary" />
+                        <FitnessCenterIcon sx={{ color: "#008000" }} />
                         Adicionar Recomendação
                     </Box>
                 </DialogTitle>
