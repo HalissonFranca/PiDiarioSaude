@@ -1,21 +1,11 @@
 import { useState, useEffect } from "react";
 import {
-    Box,
-    Paper,
-    Typography,
-    TextField,
-    Button,
-    Container,
+    Box, Paper, Typography, Button, Container, Avatar, Chip,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ModuleGridMedico } from "@/features/diario_saude/components/ModuleGridMedico";
-
-import { usuarioDoencaApi } from "../api/usuarioDoencaApi";
-import { usuarioAlergiaApi } from "../api/usuarioAlergiaApi";
 import { questionarioApi } from "../api/questionarioApi";
 import { usuarioApi } from "../api/usuarioApi";
-
-import type { Doenca, Alergia } from "../api/types";
 
 export default function DashboardMedico() {
     const location = useLocation();
@@ -24,220 +14,105 @@ export default function DashboardMedico() {
     const paciente = location.state?.paciente;
     const prescricao = location.state?.prescricao;
 
-    useEffect(() => {
-        if (!paciente || !prescricao) {
-            // O redirecionamento só é executado após a montagem/renderização
-            navigate("/medico");
-        }
-    }, [paciente, prescricao, navigate]); // Adicionado `Maps` nas dependências
-
-    // -----------------------------
-    // Restante do estado e lógica
-    // -----------------------------
-    const [editData, setEditData] = useState({
-        nome: paciente?.nome ?? "", // Usa optional chaining (?) para evitar erro se paciente for nulo
-        idade: String(paciente?.idade ?? ""),
-        peso: String(paciente?.peso ?? ""),
-        altura: String(paciente?.altura ?? ""),
-        alergias: paciente?.alergias ?? "",
-    });
-
-    const [doencas, setDoencas] = useState<Doenca[]>([]);
-    const [alergias, setAlergias] = useState<Alergia[]>([]);
     const [pontuacao, setPontuacao] = useState<number | null>(null);
-    const [interpretacao, setInterpretacao] = useState<string>("");
+    const [dadosClinicos, setDadosClinicos] = useState<any>(null);
+    const [ultimaAtualizacao, setUltimaAtualizacao] = useState("");
 
-    // Se o paciente ou a prescrição ainda não foram carregados (e o useEffect de cima
-    // ainda não executou a navegação), retorne null temporariamente para evitar erros
-    // de acesso a propriedades (como paciente.id_usuario) no restante do componente.
+    useEffect(() => {
+        if (!paciente || !prescricao) navigate("/medico");
+    }, [paciente, prescricao, navigate]);
+
+    useEffect(() => {
+        setUltimaAtualizacao(new Date().toLocaleDateString("pt-BR"));
+    }, []);
 
     useEffect(() => {
         if (!paciente) return;
         const id = paciente.id_usuario ?? paciente.id;
         usuarioApi.porUsuarioId(id)
-            .then((dados) => {
-                setEditData({
-                    nome: dados.nome ?? paciente.nome ?? "",
-                    idade: String(dados.idade ?? ""),
-                    peso: String(dados.peso ?? ""),
-                    altura: String(dados.altura ?? ""),
-                    alergias: paciente.alergias ?? "",
-                });
-            })
-            .catch(() => {
-                setEditData({
-                    nome: paciente.nome ?? "",
-                    idade: "",
-                    peso: "",
-                    altura: "",
-                    alergias: "",
-                });
-            });
-    }, [paciente?.id_usuario]);
+            .then(setDadosClinicos)
+            .catch(() => setDadosClinicos(null));
+    }, [paciente?.id_usuario ?? paciente?.id]);
 
-    if (!paciente || !prescricao) {
-        return null;
-    }
-
-    // -----------------------------
-    // CARREGAR DADOS DO PACIENTE
-    // -----------------------------
     useEffect(() => {
         if (!paciente) return;
-
-        usuarioDoencaApi.listar(paciente.id_usuario).then((lista: any[]) => {
-            setDoencas(lista);
-        });
-
-        usuarioAlergiaApi.listar(paciente.id_usuario).then((lista: any[]) => {
-            setAlergias(lista);
-        });
-
-        questionarioApi.obterRespostas(paciente.id_usuario).then((respostas) => {
+        const id = paciente.id_usuario ?? paciente.id;
+        questionarioApi.obterRespostas(id).then((respostas) => {
             const total = respostas.reduce((acc: number, r: any) => acc + r.peso, 0);
             setPontuacao(total);
-            if (total <= 6) setInterpretacao("baixa vulnerabilidade clínico funcional");
-            else if (total <= 10) setInterpretacao("moderada vulnerabilidade clínico funcional");
-            else setInterpretacao("alta vulnerabilidade clínico funcional");
         });
+    }, [paciente?.id_usuario ?? paciente?.id]);
 
-    }, [paciente?.id_usuario]);
+    if (!paciente || !prescricao) return null;
 
-    // -----------------------------
-    // SALVAR ALTERAÇÕES DO PACIENTE
-    // -----------------------------
-    const handleSalvar = async () => {
-        try {
-            const payload = {
-                userId: paciente.id_usuario,
-                nome: editData.nome,
-                idade: Number(editData.idade),
-                peso: Number(editData.peso),
-                altura: Number(editData.altura),
-            };
-
-            await usuarioApi.atualizar(payload);
-            alert("Informações do paciente atualizadas!");
-        } catch (err) {
-            console.error(err);
-            alert("Erro ao atualizar informações.");
-        }
+    const getStatus = () => {
+        if (pontuacao === null) return { label: "—", color: "default" as const };
+        if (pontuacao <= 6) return { label: "Estável", color: "success" as const };
+        if (pontuacao <= 10) return { label: "Atenção", color: "warning" as const };
+        return { label: "Crítico", color: "error" as const };
     };
 
-    const handleChange = (e: any) => {
-        setEditData({ ...editData, [e.target.name]: e.target.value });
-    };
+    const status = getStatus();
 
-    // -----------------------------
-    // RENDER (mantido)
-    // -----------------------------
+    const dados = dadosClinicos ?? paciente;
+    const dadosFormatados = [
+        dados?.idade && `${dados.idade} anos`,
+        dados?.peso && `${dados.peso} kg`,
+        dados?.altura && `${dados.altura} m`,
+    ].filter(Boolean).join(" • ") || "Dados clínicos não informados";
+
     return (
-        <Container maxWidth="xl" sx={{ py: 5 }}>
-            <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
-                <Typography variant="h4" fontWeight="bold" mb={4} align="center">
-                    Dashboard Médico
-                </Typography>
+        <Container maxWidth="lg" sx={{ py: 5 }}>
 
-                <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 4 }}>
-                    {/* Painel do Paciente */}
-                    <Paper
-                        elevation={3}
-                        sx={{
-                            p: 3,
-                            borderRadius: 3,
-                            flex: "1 1 600px",
-                            display: "grid",
-                            gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-                            gap: 3,
-                            minWidth: 500,
-                        }}
-                    >
-                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                            <Typography variant="h5" fontWeight="bold">
-                                Informações do Paciente
+            {/* Header do paciente */}
+            <Paper
+                elevation={2}
+                sx={{
+                    mb: 4, p: 3, borderRadius: 3,
+                    borderLeft: "4px solid #1565c0",
+                    display: "flex", justifyContent: "space-between",
+                    alignItems: "center", flexWrap: "wrap", gap: 2,
+                }}
+            >
+                <Box display="flex" alignItems="center" gap={2}>
+                    <Avatar sx={{ width: 56, height: 56, bgcolor: "#1565c0", fontSize: "1.4rem" }}>
+                        {(paciente.nome ?? paciente.name)?.charAt(0)}
+                    </Avatar>
+                    <Box>
+                        <Typography variant="h6" fontWeight={700}>
+                            {paciente.nome ?? paciente.name}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            {dadosFormatados}
+                        </Typography>
+                        <Box display="flex" alignItems="center" gap={1} mt={0.5}>
+                            <Chip
+                                label={status.label}
+                                color={status.color}
+                                size="small"
+                            />
+                            <Typography variant="caption" color="text.secondary">
+                                Atualizado em: {ultimaAtualizacao}
                             </Typography>
-
-                            <TextField
-                                label="Nome"
-                                name="nome"
-                                value={editData.nome}
-                                onChange={handleChange}
-                                fullWidth
-                            />
-
-                            <TextField
-                                label="Idade"
-                                name="idade"
-                                type="number"
-                                value={editData.idade}
-                                onChange={handleChange}
-                                fullWidth
-                            />
-
-                            <TextField
-                                label="Peso (kg)"
-                                name="peso"
-                                type="number"
-                                value={editData.peso}
-                                onChange={handleChange}
-                                fullWidth
-                            />
-
-                            <TextField
-                                label="Altura (m)"
-                                name="altura"
-                                type="number"
-                                value={editData.altura}
-                                onChange={handleChange}
-                                fullWidth
-                            />
-
-                            <Button variant="contained" onClick={handleSalvar}>
-                                Salvar Alterações
-                            </Button>
-
-                            {pontuacao !== null && (
-                                <Box
-                                    sx={{
-                                        mt: 2,
-                                        p: 3,
-                                        border: "1px solid #ccc",
-                                        borderRadius: 2,
-                                        bgcolor: "#f5f5f5",
-                                    }}
-                                >
-                                    <Typography variant="h6">Pontuação do Questionário</Typography>
-                                    <Typography fontWeight="bold" fontSize="1.2rem">
-                                        Total: {pontuacao} pontos
-                                    </Typography>
-                                    <Typography>{interpretacao}</Typography>
-                                </Box>
-                            )}
                         </Box>
-
-                        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                            <Box>
-                                <Typography variant="h6" fontWeight="bold">Doenças</Typography>
-                                {doencas.map((d) => (
-                                    <Typography key={d.id}>• {d.nome}</Typography>
-                                ))}
-                            </Box>
-
-                            <Box>
-                                <Typography variant="h6" fontWeight="bold">Alergias</Typography>
-                                {alergias.map((a) => (
-                                    <Typography key={a.id}>• {a.nome}</Typography>
-                                ))}
-                            </Box>
-                        </Box>
-                    </Paper>
-
-                    {/* Painel Modular */}
-                    <Box sx={{ flex: "3 1 700px" }}>
-                        <Typography variant="h5" fontWeight="bold" mb={2}>Funções</Typography>
-                        <ModuleGridMedico paciente={paciente} prescricao={prescricao} />
                     </Box>
                 </Box>
+
+                <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => navigate("/atendimento/historico-medico", { state: { paciente, prescricao } })}
+                >
+                    Ver Histórico
+                </Button>
+            </Paper>
+
+            {/* Cards de funcionalidades */}
+            <Paper elevation={2} sx={{ p: 4, borderRadius: 3 }}>
+                <Typography variant="h5" fontWeight="bold" mb={3} textAlign="center">
+                    Funcionalidades do Sistema
+                </Typography>
+                <ModuleGridMedico paciente={paciente} prescricao={prescricao} />
             </Paper>
         </Container>
     );

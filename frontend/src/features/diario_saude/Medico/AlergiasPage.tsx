@@ -135,7 +135,7 @@ export default function AlergiasPage() {
           <Box textAlign="right">
             <Typography variant="caption">Responsável</Typography>
             <Typography fontWeight={700}>
-              {usuarioLogado?.nome ?? "Usuário"}
+              {usuarioLogado?.nome || usuarioLogado?.name || "Usuário"}
             </Typography>
             <Typography variant="body2">{dataHoje}</Typography>
           </Box>
@@ -146,7 +146,7 @@ export default function AlergiasPage() {
         {/* 📋 Título */}
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
           <Box display="flex" alignItems="center" gap={1}>
-            <WarningAmberIcon color="warning" />
+            <WarningAmberIcon sx={{ color: "#FF7F00" }} />
             <Typography variant="h6" fontWeight={600}>
               Alergias Cadastradas
             </Typography>
@@ -193,7 +193,7 @@ export default function AlergiasPage() {
                 }}
               >
                 <Box display="flex" alignItems="center" gap={1}>
-                  <WarningAmberIcon fontSize="small" color="warning" />
+                  <WarningAmberIcon fontSize="small" sx={{ color: "#FF7F00" }} />
                   <Typography fontWeight={600}>{a.nome}</Typography>
                 </Box>
 
@@ -219,17 +219,22 @@ export default function AlergiasPage() {
           startIcon={<AddIcon />}
           variant="outlined"
           fullWidth
-          color="success"
           sx={{ borderRadius: 2, py: 1.2 }}
           onClick={() => setDialogOpen(true)}
+
         >
           Adicionar Alergia
         </Button>
       </Paper>
 
-      {/* 📦 Dialog */}
+      {/* Dialog */}
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth maxWidth="sm">
-        <DialogTitle>Adicionar Alergia</DialogTitle>
+        <DialogTitle>
+          <Box display="flex" alignItems="center" gap={1}>
+            <WarningAmberIcon sx={{ color: "#FF7F00" }} />
+            Adicionar Alergia
+          </Box>
+        </DialogTitle>
 
         <DialogContent>
           <Stack spacing={2} mt={2}>
@@ -250,7 +255,6 @@ export default function AlergiasPage() {
 
           <Button
             variant="contained"
-            color="success"
             onClick={() => {
               if (!alergiaSelecionada || !pacienteId)
                 return alert("Selecione uma alergia.");

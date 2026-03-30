@@ -67,12 +67,12 @@ export default function DiagnosticarDoencaPage() {
     <Container maxWidth="md" sx={{ py: 4 }}>
 
       {/* Cabeçalho */}
-      <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 3, borderTop: "4px solid #1565c0" }}>
+      <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 3, borderTop: "4px solid #6A1B94" }}>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Box display="flex" alignItems="center" gap={1.5}>
-            <LocalHospitalIcon sx={{ fontSize: 36, color: "#1565c0" }} />
+            <LocalHospitalIcon sx={{ fontSize: 36, color: "#6A1B94" }} />
             <Box>
-              <Typography variant="h5" fontWeight={700} color="#1565c0">
+              <Typography variant="h5" fontWeight={700} color="#6A1B94">
                 DIAGNÓSTICO DE DOENÇAS
               </Typography>
               <Typography variant="body2" color="text.secondary">
@@ -111,7 +111,7 @@ export default function DiagnosticarDoencaPage() {
         {/* Lista de doenças */}
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
           <Box display="flex" alignItems="center" gap={1}>
-            <CoronavirusIcon color="error" />
+            <CoronavirusIcon sx={{ color: "#6A1B9A" }} />
             <Typography variant="h6" fontWeight={600}>Doenças Diagnosticadas</Typography>
           </Box>
           <Chip label={`${doencasPaciente.length} item(s)`} size="small" color="error" variant="outlined" />
@@ -131,7 +131,7 @@ export default function DiagnosticarDoencaPage() {
                 sx={{ p: 2, borderRadius: 2, border: "1px solid #e0e0e0", display: "flex", justifyContent: "space-between", alignItems: "center" }}
               >
                 <Box display="flex" alignItems="center" gap={1}>
-                  <CoronavirusIcon fontSize="small" color="error" />
+                  <CoronavirusIcon fontSize="small" sx={{ color: "#6A1B9A" }} />
                   <Box>
                     <Typography fontWeight={600}>{d.nome ?? d.doenca?.nome}</Typography>
                     {(d.categoria ?? d.doenca?.categoria) && (
@@ -160,8 +160,6 @@ export default function DiagnosticarDoencaPage() {
           startIcon={<AddIcon />}
           variant="outlined"
           fullWidth
-          color="error"
-          sx={{ borderRadius: 2, py: 1.2 }}
           onClick={() => setDialogOpen(true)}
         >
           Adicionar Doença
@@ -172,7 +170,7 @@ export default function DiagnosticarDoencaPage() {
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth maxWidth="sm">
         <DialogTitle sx={{ borderBottom: "1px solid #eee", pb: 2 }}>
           <Box display="flex" alignItems="center" gap={1}>
-            <CoronavirusIcon color="error" />
+            <CoronavirusIcon sx={{ color: "#6A1B9A" }} />
             Adicionar Doença
           </Box>
         </DialogTitle>
@@ -196,7 +194,7 @@ export default function DiagnosticarDoencaPage() {
           <Button onClick={() => setDialogOpen(false)}>Cancelar</Button>
           <Button
             variant="contained"
-            color="error"
+
             onClick={() => {
               if (!doencaSelecionada || !paciente) return alert("Selecione uma doença.");
               addDoencaMutation.mutate({ usuarioId: paciente.id_usuario, doencaId: doencaSelecionada.id });
