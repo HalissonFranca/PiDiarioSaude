@@ -3,7 +3,6 @@ package br.pucgo.ads.projetointegrador.diario_saude.entity;
 import org.springframework.beans.BeanUtils;
 import br.pucgo.ads.projetointegrador.diario_saude.dto.PrescricaoExameDTO;
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 
 @Entity
@@ -22,18 +21,24 @@ public class PrescricaoExameEntity {
     @JoinColumn(name = "id_prescricao", nullable = false)
     private PrescricaoMedicaEntity prescricaoMedica;
 
-
     @Column(nullable = false)
     private LocalDate data_prescricao;
 
     @Column(columnDefinition = "TEXT")
     private String observacao;
 
-    public PrescricaoExameEntity(PrescricaoExameDTO dto){
+    @Column(columnDefinition = "TEXT")
+    private String resultado;
+
+    @Column(nullable = true)
+    private LocalDate data_realizacao;
+
+    public PrescricaoExameEntity(PrescricaoExameDTO dto) {
         BeanUtils.copyProperties(dto, this);
     }
 
-    public PrescricaoExameEntity(){}
+    public PrescricaoExameEntity() {
+    }
 
     public long getId_prescricao_exame() {
         return id_prescricao_exame;
@@ -49,6 +54,14 @@ public class PrescricaoExameEntity {
 
     public void setExame(ExameEntity exame) {
         this.exame = exame;
+    }
+
+    public PrescricaoMedicaEntity getPrescricaoMedica() {
+        return prescricaoMedica;
+    }
+
+    public void setPrescricaoMedica(PrescricaoMedicaEntity prescricaoMedica) {
+        this.prescricaoMedica = prescricaoMedica;
     }
 
     public LocalDate getData_prescricao() {
@@ -67,11 +80,19 @@ public class PrescricaoExameEntity {
         this.observacao = observacao;
     }
 
-    public PrescricaoMedicaEntity getPrescricaoMedica() {
-        return prescricaoMedica;
+    public String getResultado() {
+        return resultado;
     }
 
-    public void setPrescricaoMedica(PrescricaoMedicaEntity prescricaoMedica) {
-        this.prescricaoMedica = prescricaoMedica;
+    public void setResultado(String resultado) {
+        this.resultado = resultado;
+    }
+
+    public LocalDate getData_realizacao() {
+        return data_realizacao;
+    }
+
+    public void setData_realizacao(LocalDate data_realizacao) {
+        this.data_realizacao = data_realizacao;
     }
 }

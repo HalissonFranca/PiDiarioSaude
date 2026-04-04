@@ -1,3 +1,5 @@
+// NÃO ESTA SENDO USADA POR NINGUEM ATE O MOMENTO
+
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Box, Typography, Stack, Paper, Divider, Chip } from "@mui/material";
