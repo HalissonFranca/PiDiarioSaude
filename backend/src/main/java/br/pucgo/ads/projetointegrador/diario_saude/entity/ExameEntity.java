@@ -8,7 +8,6 @@ import br.pucgo.ads.projetointegrador.diario_saude.dto.ExameDTO;
 import jakarta.persistence.*;
 import java.util.List;
 
-
 @Entity
 @Table(name = "ds_exame")
 public class ExameEntity {
@@ -20,9 +19,10 @@ public class ExameEntity {
     @Column(nullable = false)
     private String nome_exame;
 
-    public ExameEntity(){}
+    public ExameEntity() {
+    }
 
-    public ExameEntity(ExameDTO exame){
+    public ExameEntity(ExameDTO exame) {
         BeanUtils.copyProperties(exame, this);
     }
 

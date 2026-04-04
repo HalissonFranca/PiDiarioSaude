@@ -2,10 +2,19 @@ import { Box } from '@mui/material';
 import { ModuleCard } from '../../../components/ModuleCard';
 import HistoryIcon from '@mui/icons-material/History';
 import CoronavirusIcon from '@mui/icons-material/Coronavirus';
+import QuizIcon from '@mui/icons-material/Quiz';
+import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import { useNavigate } from 'react-router-dom';
 
 export function ModuleGridIdoso() {
     const navigate = useNavigate();
+
+    const paciente = (() => {
+        try {
+            return JSON.parse(localStorage.getItem("usuario") || "null") ||
+                JSON.parse(localStorage.getItem("user") || "null");
+        } catch { return null; }
+    })();
 
     const items = [
         {
@@ -15,17 +24,18 @@ export function ModuleGridIdoso() {
             onClick: () => navigate('/historico_consultas'),
         },
         {
-            icon: <CoronavirusIcon sx={{ fontSize: 40 }} color="info" />,
+            icon: <CoronavirusIcon sx={{ fontSize: 40 }} color="error" />,
             title: 'Informações de Saúde',
             desc: 'Doenças cadastradas do paciente.',
             onClick: () => navigate('/informacoes_saude'),
         },
         {
-            icon: <CoronavirusIcon sx={{ fontSize: 40 }} color="success" />,
+            icon: <QuizIcon sx={{ fontSize: 40 }} color="success" />,
             title: 'Questionário de Saúde',
             desc: 'Responda o questionário de avaliação.',
             onClick: () => navigate('/questionario_saude'),
         },
+
     ];
 
     return (

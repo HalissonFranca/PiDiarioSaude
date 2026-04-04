@@ -5,6 +5,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import { useNavigate } from 'react-router-dom';
+import ScienceIcon from '@mui/icons-material/Science';
 
 type Paciente = {
   id_usuario: number;
@@ -38,6 +39,12 @@ export function ModuleGridMedico({ paciente, prescricao }: { paciente: Paciente,
       onClick: () => navigate('/atendimento/exercicios', { state: { paciente, prescricao } }),
     },
     {
+      icon: <ScienceIcon sx={{ fontSize: 40 }} color="primary" />,
+      title: 'Resultado de Exames',
+      desc: 'Registrar resultados dos exames solicitados.',
+      onClick: () => navigate('/atendimento/resultado-exames', { state: { paciente, prescricao } }),
+    },
+    {
       icon: <LocalHospitalIcon sx={{ fontSize: 40, color: "#7F00FF" }} />,
       title: 'Diagnosticar Doenças',
       desc: 'Selecionar doenças para o paciente.',
@@ -50,17 +57,19 @@ export function ModuleGridMedico({ paciente, prescricao }: { paciente: Paciente,
       onClick: () => navigate('/atendimento/alergias', { state: { paciente } }),
     },
     {
+      icon: <AssignmentIcon sx={{ fontSize: 40 }} color="primary" />,
+      title: 'Questionário de Saúde',
+      desc: 'Visualizar respostas e pontuação do questionário do paciente.',
+      onClick: () => navigate('/medico/respostas-questionario', { state: { paciente } }),
+    },
+    {
       icon: <DescriptionIcon sx={{ fontSize: 40 }} color="info" />,
       title: 'Histórico de Consultas',
       desc: 'Ver todas as consultas do paciente.',
       onClick: () => navigate('/atendimento/historico-medico', { state: { paciente } }),
     },
-    {
-      icon: <AssignmentIcon sx={{ fontSize: 40 }} color="primary" />,
-      title: 'Questionário de Saúde',
-      desc: 'Visualizar respostas e pontuação do questionário do paciente.',
-      onClick: () => navigate('/respostas_questionario', { state: { paciente } }),
-    },
+
+
   ];
 
   return (
