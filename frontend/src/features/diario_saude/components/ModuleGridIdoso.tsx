@@ -2,8 +2,8 @@ import { Box } from '@mui/material';
 import { ModuleCard } from '../../../components/ModuleCard';
 import HistoryIcon from '@mui/icons-material/History';
 import CoronavirusIcon from '@mui/icons-material/Coronavirus';
+import MonitorWeightIcon from '@mui/icons-material/MonitorWeight';
 import QuizIcon from '@mui/icons-material/Quiz';
-import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import { useNavigate } from 'react-router-dom';
 
 export function ModuleGridIdoso() {
@@ -35,6 +35,12 @@ export function ModuleGridIdoso() {
             desc: 'Responda o questionário de avaliação.',
             onClick: () => navigate('/questionario_saude'),
         },
+        {
+            icon: <MonitorWeightIcon sx={{ fontSize: 40 }} color="primary" />,
+            title: 'Dados Biométricos',
+            desc: 'Atualize seu peso e altura.',
+            onClick: () => navigate('/dados_biometricos'),
+        }
 
     ];
 

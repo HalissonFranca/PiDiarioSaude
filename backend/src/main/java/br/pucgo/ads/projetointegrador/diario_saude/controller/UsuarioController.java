@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import br.pucgo.ads.projetointegrador.diario_saude.dto.UsuarioDTO;
+import br.pucgo.ads.projetointegrador.diario_saude.entity.UsuarioEntity;
 import br.pucgo.ads.projetointegrador.diario_saude.service.UsuarioService;
 import br.pucgo.ads.projetointegrador.plataforma.repository.UserRepository;
 
@@ -53,11 +54,15 @@ public class UsuarioController {
         return usuarioService.listarIdosos();
     }
 
-    // ✅ busca ou cria automaticamente o registro clínico pelo userId
     @GetMapping("/por-user/{userId}")
     public ResponseEntity<UsuarioDTO> buscarPorUserId(@PathVariable Long userId) {
-        return ResponseEntity.ok(
-                new UsuarioDTO(usuarioService.buscarOuCriarPaciente(userId)));
+        UsuarioEntity entity = usuarioService.buscarOuCriarPaciente(userId);
+        UsuarioDTO dto = new UsuarioDTO(entity);
+
+        // ✅ BeanUtils não copia User → userId, então populamos manualmente
+        dto.setUserId(entity.getUser() != null ? entity.getUser().getId() : null);
+
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/pacientes")
