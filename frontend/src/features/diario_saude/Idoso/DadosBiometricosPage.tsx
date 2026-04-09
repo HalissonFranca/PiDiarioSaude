@@ -30,7 +30,6 @@ export default function DadosBiometricosPage() {
     const [sucesso, setSucesso] = useState(false);
     const [erro, setErro] = useState("");
 
-    // ✅ guarda o UsuarioEntity completo para não perder campos no PUT
     const [dadosUsuario, setDadosUsuario] = useState<any>(null);
 
     useEffect(() => {
@@ -42,7 +41,6 @@ export default function DadosBiometricosPage() {
             return;
         }
 
-        // ✅ usa /por-user/ se tiver userId da plataforma, senão busca direto pelo id do UsuarioEntity
         const url = userId
             ? `http://localhost:8080/api/diario_saude/usuario/por-user/${userId}`
             : `http://localhost:8080/api/diario_saude/usuario/${usuarioId}`;

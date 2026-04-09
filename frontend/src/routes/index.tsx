@@ -29,6 +29,7 @@ import GerenciarQuestionarioPage from '@/features/diario_saude/Admin/GerenciarQu
 import MedicoRespostasQuestionarioPage from '@/features/diario_saude/Medico/MedicoRespostasQuestionarioPage';
 import RegistrarResultadoExamePage from '@/features/diario_saude/Medico/RegistrarResultadoExamePage';
 import DadosBiometricosPage from '@/features/diario_saude/Idoso/DadosBiometricosPage';
+import CadastroAlergiaDoencaPage from '@/features/diario_saude/Admin/CadastroAlergiaDoencaPage';
 
 function Home() {
   return (
@@ -63,6 +64,7 @@ export function AppRoutes() {
         <Route path="admin/medicos/:id/edit" element={<EditMedicoPage />} />
         <Route path="admin/cuidadores/:id/edit" element={<EditCuidadorPage />} />
         <Route path="/admin/questionario" element={<GerenciarQuestionarioPage />} />
+        <Route path="/admin/cadastro-alergia-doenca" element={<CadastroAlergiaDoencaPage />} />
 
         {/* Rotas gerais */}
         <Route path="usuarios" element={<UsuariosPage />} />

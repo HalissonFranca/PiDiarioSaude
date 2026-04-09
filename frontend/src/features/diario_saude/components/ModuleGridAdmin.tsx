@@ -13,6 +13,12 @@ export function ModuleGridAdmin() {
             desc: 'Adicionar, editar ou excluir perguntas.',
             onClick: () => navigate('/admin/questionario'),
         },
+        {
+            icon: <SettingsIcon sx={{ fontSize: 40 }} color="warning" />,
+            title: 'Cadastro de Alergias e Doenças',
+            desc: 'Cadastro de alergias e doenças.',
+            onClick: () => navigate('/admin/cadastro-alergia-doenca'),
+        },
     ];
 
     return (
