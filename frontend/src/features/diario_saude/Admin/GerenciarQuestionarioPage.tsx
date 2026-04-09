@@ -117,6 +117,7 @@ export default function GerenciarQuestionarioPage() {
     }
 
     return (
+
         <PageContainer>
             <BackButton to="/saude" />
             <PageTitle>Gerenciar Questionário</PageTitle>
