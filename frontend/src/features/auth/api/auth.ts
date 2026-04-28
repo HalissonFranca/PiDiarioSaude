@@ -23,7 +23,7 @@ export interface LoginResponse {
 
 export const authApi = {
   login: async (credentials: LoginRequest): Promise<LoginResponse> => {
-    const { data } = await http.post<LoginResponse>('/api/auth/login', credentials);
+    const { data } = await http.post<LoginResponse>('http://localhost:8080/api/auth/login', credentials);
     console.log('Login response data:', data); // Log para depuração
     return data;
   },
